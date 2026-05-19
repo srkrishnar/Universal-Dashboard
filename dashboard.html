@@ -1819,6 +1819,108 @@
     }
 
     /* ══════════════════════════════════════
+       DASHBOARD 2 — compare filter panel
+    ══════════════════════════════════════ */
+    .d2-filters-bar {
+      flex-wrap: wrap;
+      row-gap: 8px;
+      align-items: flex-start;
+    }
+
+    .d2-compare-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 12px;
+      border-left: 1px solid #E2E6F0;
+      min-width: 0;
+    }
+
+    .d2-compare-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .d2-compare-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #6B7899;
+    }
+
+    .d2-add-compare-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2E7D6B;
+      background: rgba(46,125,107,.08);
+      border: 1px solid rgba(46,125,107,.25);
+      border-radius: 6px;
+      padding: 3px 9px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .d2-add-compare-btn:hover { background: rgba(46,125,107,.16); }
+    .d2-add-compare-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .d2-compare-rows {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .d2-compare-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      background: #F0F7F5;
+      border: 1px solid rgba(46,125,107,.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .d2-compare-row .filter-field {
+      min-width: 130px;
+    }
+
+    .d2-compare-row .filter-field label {
+      font-size: 10px;
+      color: #2E7D6B;
+    }
+
+    .d2-compare-row select {
+      font-size: 12px;
+      min-height: 34px;
+      padding: 0 28px 0 10px;
+    }
+
+    .d2-remove-btn {
+      background: none;
+      border: none;
+      color: #9AA3B8;
+      font-size: 16px;
+      line-height: 1;
+      padding: 4px 2px;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: color .15s;
+    }
+    .d2-remove-btn:hover { color: #E05252; }
+
+    .d2-compare-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: #2E7D6B;
+      border-radius: 4px;
+      padding: 2px 6px;
+      align-self: flex-end;
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════
        DASHBOARD 2 — dedicated styles
     ══════════════════════════════════════ */
     .d2-upload .hero-title { font-size: clamp(32px, 5vw, 52px); }
@@ -2644,17 +2746,15 @@
     </header>
 
     <!-- Dashboard 2 Filters -->
-    <section id="filtersBar2" class="filters-bar hidden">
+    <section id="filtersBar2" class="filters-bar d2-filters-bar hidden">
       <div id="filtersWrap2" class="filters-wrap"></div>
-      <div id="customFilter2" class="custom-filter" aria-label="Custom filter">
-        <div class="filter-field">
-          <label for="customFilterColumn2">Custom column</label>
-          <select id="customFilterColumn2"></select>
+      <!-- Multi-compare panel -->
+      <div id="comparePanel2" class="d2-compare-panel">
+        <div class="d2-compare-header">
+          <span class="d2-compare-title">Compare</span>
+          <button id="addCompareBtn2" class="d2-add-compare-btn" type="button">+ Add</button>
         </div>
-        <div class="filter-field">
-          <label for="customFilterValue2">Custom value</label>
-          <select id="customFilterValue2" disabled></select>
-        </div>
+        <div id="compareRows2" class="d2-compare-rows"></div>
       </div>
       <button id="resetFiltersBtn2" class="ghost-btn" type="button">Reset</button>
     </section>
@@ -4469,8 +4569,8 @@ RULES:
       domainIcon:        document.getElementById("domainIcon2"),
       filtersBar:        document.getElementById("filtersBar2"),
       filtersWrap:       document.getElementById("filtersWrap2"),
-      customFilterColumn:document.getElementById("customFilterColumn2"),
-      customFilterValue: document.getElementById("customFilterValue2"),
+      compareRows:       document.getElementById("compareRows2"),
+      addCompareBtn:     document.getElementById("addCompareBtn2"),
       resetFiltersBtn:   document.getElementById("resetFiltersBtn2"),
       dashboardMain:     document.getElementById("dashboardMain2"),
       kpiGrid:           document.getElementById("kpiGrid2"),
@@ -4525,8 +4625,7 @@ RULES:
       ["dragleave","drop"].forEach(t => els2.dropZone.addEventListener(t, e => { e.preventDefault(); els2.dropZone.classList.remove("drag-over"); }));
       els2.dropZone.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) handleFile2(f); });
       els2.fileInput.addEventListener("change", e => { const f = e.target.files[0]; if (f) handleFile2(f); e.target.value = ""; });
-      els2.customFilterColumn.addEventListener("change", updateCustomFilterValues2);
-      els2.customFilterValue.addEventListener("change", applyFilters2);
+      els2.addCompareBtn.addEventListener("click", addCompareRow2);
       els2.resetFiltersBtn.addEventListener("click", resetFilters2);
       els2.exportHtmlBtn.addEventListener("click", () => {
         const html = "<!DOCTYPE html>" + document.documentElement.outerHTML;
@@ -4998,51 +5097,137 @@ RULES:
     }
 
     /* ── Filters for D2 ── */
+    /* D2_COMPARE_COLS: all column names available for comparison dropdowns */
+    let D2_COMPARE_COLS = [];
+    const D2_MAX_COMPARE = 4;
+
     function populateFilters2(spec, data) {
       els2.filtersWrap.replaceChildren();
+      els2.compareRows.replaceChildren();
+      els2.addCompareBtn.disabled = false;
+
       const columns = Object.keys(data[0]||{});
+      D2_COMPARE_COLS = columns;
+
       const colSummary = classifyColumns(data);
-      const filters = (spec.filters&&spec.filters.length?spec.filters:buildFilterSpecs(data,columns,colSummary)).filter(f => f.column && columns.includes(f.column) && uniqueValues(data,f.column).length>0);
+      const filters = (spec.filters&&spec.filters.length?spec.filters:buildFilterSpecs(data,columns,colSummary))
+        .filter(f => f.column && columns.includes(f.column) && uniqueValues(data,f.column).length>0);
       filters.forEach(filter => {
         const field = document.createElement("div"); field.className="filter-field";
         const lbl = document.createElement("label"); lbl.textContent=filter.column;
         const sel = document.createElement("select"); sel.dataset.column=filter.column;
-        const all = document.createElement("option"); all.value=""; all.textContent="All"; sel.appendChild(all);
-        uniqueValues(data,filter.column).slice(0,200).forEach(v => { const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); });
-        sel.addEventListener("change",applyFilters2);
+        sel.appendChild(optionFor("","All"));
+        uniqueValues(data,filter.column).slice(0,200).forEach(v => sel.appendChild(optionFor(v,v)));
+        sel.addEventListener("change", applyFilters2);
         field.append(lbl,sel); els2.filtersWrap.appendChild(field);
       });
-      const allCols = columns;
-      els2.customFilterColumn.replaceChildren(optionFor("","Choose column"));
-      allCols.forEach(c => els2.customFilterColumn.appendChild(optionFor(c,c)));
-      updateCustomFilterValues2(false);
     }
 
-    function updateCustomFilterValues2(shouldApply=true) {
-      const col = els2.customFilterColumn.value;
-      els2.customFilterValue.replaceChildren(optionFor("", col?"All values":"Choose column first"));
-      els2.customFilterValue.disabled = !col;
-      if (!col) { if(shouldApply) applyFilters2(); return; }
-      uniqueValues(RAW_DATA2, col).forEach(v => els2.customFilterValue.appendChild(optionFor(v,v)));
-      if(shouldApply) applyFilters2();
+    function addCompareRow2() {
+      const rows = els2.compareRows.querySelectorAll(".d2-compare-row");
+      if (rows.length >= D2_MAX_COMPARE) return;
+
+      const rowIndex = rows.length;
+      const row = document.createElement("div"); row.className = "d2-compare-row";
+
+      // Tag: "Comparison 1", "Comparison 2" etc.
+      const tag = document.createElement("span"); tag.className = "d2-compare-tag";
+      tag.textContent = `#${rowIndex + 1}`;
+
+      // Column selector
+      const colField = document.createElement("div"); colField.className = "filter-field";
+      const colLbl = document.createElement("label"); colLbl.textContent = "Column";
+      const colSel = document.createElement("select"); colSel.className = "d2-compare-col-sel";
+      colSel.appendChild(optionFor("", "Choose column"));
+      D2_COMPARE_COLS.forEach(c => colSel.appendChild(optionFor(c, c)));
+      colField.append(colLbl, colSel);
+
+      // Value 1 selector
+      const val1Field = document.createElement("div"); val1Field.className = "filter-field";
+      const val1Lbl = document.createElement("label"); val1Lbl.textContent = "Value 1";
+      const val1Sel = document.createElement("select"); val1Sel.className = "d2-compare-val1-sel"; val1Sel.disabled = true;
+      val1Sel.appendChild(optionFor("", "Choose column first"));
+      val1Field.append(val1Lbl, val1Sel);
+
+      // Value 2 selector
+      const val2Field = document.createElement("div"); val2Field.className = "filter-field";
+      const val2Lbl = document.createElement("label"); val2Lbl.textContent = "Value 2";
+      const val2Sel = document.createElement("select"); val2Sel.className = "d2-compare-val2-sel"; val2Sel.disabled = true;
+      val2Sel.appendChild(optionFor("", "All / same"));
+      val2Field.append(val2Lbl, val2Sel);
+
+      // Remove button
+      const removeBtn = document.createElement("button"); removeBtn.className = "d2-remove-btn"; removeBtn.type = "button";
+      removeBtn.textContent = "×"; removeBtn.title = "Remove this comparison";
+
+      // Wire: when column changes, populate both value dropdowns
+      colSel.addEventListener("change", () => {
+        const col = colSel.value;
+        const vals = col ? uniqueValues(RAW_DATA2, col) : [];
+        [val1Sel, val2Sel].forEach((sel, i) => {
+          sel.replaceChildren(optionFor("", i===0 ? (col?"Any value":"Choose column first") : "All / same"));
+          sel.disabled = !col;
+          vals.slice(0,200).forEach(v => sel.appendChild(optionFor(v, v)));
+        });
+        applyFilters2();
+      });
+      val1Sel.addEventListener("change", applyFilters2);
+      val2Sel.addEventListener("change", applyFilters2);
+
+      removeBtn.addEventListener("click", () => {
+        row.remove();
+        // Re-number remaining tags
+        els2.compareRows.querySelectorAll(".d2-compare-tag").forEach((t, i) => t.textContent = `#${i+1}`);
+        els2.addCompareBtn.disabled = false;
+        applyFilters2();
+      });
+
+      row.append(tag, colField, val1Field, val2Field, removeBtn);
+      els2.compareRows.appendChild(row);
+
+      // Disable Add button at max
+      if (els2.compareRows.querySelectorAll(".d2-compare-row").length >= D2_MAX_COMPARE) {
+        els2.addCompareBtn.disabled = true;
+      }
     }
 
     function applyFilters2() {
-      const selects = [...els2.filtersWrap.querySelectorAll("select")];
-      const cc = els2.customFilterColumn.value, cv = els2.customFilterValue.value;
+      // Auto-filter selects (from spec filters)
+      const autoSelects = [...els2.filtersWrap.querySelectorAll("select")];
+
+      // Compare rows: each row = { col, val1, val2 }
+      const compareRules = [...els2.compareRows.querySelectorAll(".d2-compare-row")].map(row => ({
+        col:  row.querySelector(".d2-compare-col-sel").value,
+        val1: row.querySelector(".d2-compare-val1-sel").value,
+        val2: row.querySelector(".d2-compare-val2-sel").value
+      })).filter(r => r.col && r.val1);
+
       FILTERED_DATA2 = RAW_DATA2.filter(row => {
-        const am = selects.every(s => !s.value || String(row[s.dataset.column])===s.value);
-        const cm = !cc || !cv || String(row[cc])===cv;
-        return am && cm;
+        // Auto filters: AND across all
+        const autoMatch = autoSelects.every(s => !s.value || String(row[s.dataset.column]) === s.value);
+        if (!autoMatch) return false;
+
+        // Compare rules: each rule is satisfied if cell matches val1 OR val2 (if set)
+        // Multiple rules are ANDed (must satisfy all comparisons)
+        const compareMatch = compareRules.every(rule => {
+          const cell = String(row[rule.col] ?? "");
+          const matchesVal1 = cell === rule.val1;
+          const matchesVal2 = rule.val2 ? cell === rule.val2 : true;
+          return matchesVal1 || matchesVal2;
+        });
+
+        return compareMatch;
       });
-      if(CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
+
+      if (CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
     }
 
     function resetFilters2() {
-      els2.filtersWrap.querySelectorAll("select").forEach(s=>s.value="");
-      els2.customFilterColumn.value=""; updateCustomFilterValues2();
+      els2.filtersWrap.querySelectorAll("select").forEach(s => s.value = "");
+      els2.compareRows.replaceChildren();
+      els2.addCompareBtn.disabled = false;
       FILTERED_DATA2 = [...RAW_DATA2];
-      if(CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
+      if (CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
     }
   </script>
 </body>

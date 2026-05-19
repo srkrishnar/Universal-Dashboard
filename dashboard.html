@@ -1817,6 +1817,276 @@
         height: 250px;
       }
     }
+
+    /* ══════════════════════════════════════
+       DASHBOARD 2 — dedicated styles
+    ══════════════════════════════════════ */
+    .d2-upload .hero-title { font-size: clamp(32px, 5vw, 52px); }
+
+    .d2-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 6px;
+      padding: 16px;
+      height: 120px;
+    }
+    .d2-pg-cell { transition: opacity .3s; }
+
+    /* Custom chart containers */
+    .d2-custom-chart {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Heatmap */
+    .d2-heatmap-wrap {
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+    .d2-heatmap-table {
+      border-collapse: separate;
+      border-spacing: 3px;
+      font-size: 11px;
+      min-width: 100%;
+    }
+    .d2-heatmap-table th {
+      padding: 4px 8px;
+      font-weight: 600;
+      color: #6B7899;
+      background: none;
+      border: none;
+      text-align: center;
+      font-size: 10px;
+    }
+    .d2-heatmap-table td {
+      width: 44px;
+      height: 34px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      cursor: default;
+      transition: opacity .15s;
+    }
+    .d2-heatmap-table td:hover { opacity: .8; }
+    .d2-heatmap-row-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #3D4A6B;
+      padding-right: 6px;
+      white-space: nowrap;
+      background: none !important;
+    }
+
+    /* Treemap */
+    .d2-treemap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px;
+      height: 280px;
+      align-content: flex-start;
+    }
+    .d2-treemap-cell {
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      overflow: hidden;
+      cursor: default;
+      transition: opacity .15s;
+    }
+    .d2-treemap-cell:hover { opacity: .85; }
+    .d2-treemap-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .d2-treemap-value {
+      font-size: 10px;
+      color: rgba(255,255,255,.8);
+      margin-top: 3px;
+    }
+
+    /* Funnel */
+    .d2-funnel {
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .d2-funnel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .d2-funnel-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #3D4A6B;
+      width: 120px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .d2-funnel-bar-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .d2-funnel-bar {
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      transition: width .4s ease;
+      min-width: 40px;
+    }
+    .d2-funnel-pct {
+      font-size: 11px;
+      color: #6B7899;
+      width: 42px;
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    /* Gauge */
+    .d2-gauge-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      gap: 6px;
+    }
+    .d2-gauge-svg { overflow: visible; }
+    .d2-gauge-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1A2340;
+      text-align: center;
+    }
+    .d2-gauge-label {
+      font-size: 12px;
+      color: #6B7899;
+      text-align: center;
+    }
+
+    /* Gantt */
+    .d2-gantt-wrap {
+      overflow-x: auto;
+      padding: 8px 16px;
+    }
+    .d2-gantt-header {
+      display: flex;
+      margin-bottom: 6px;
+      padding-left: 130px;
+    }
+    .d2-gantt-col-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #9AA3B8;
+      text-align: center;
+      flex: 1;
+    }
+    .d2-gantt-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .d2-gantt-task-label {
+      width: 120px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #3D4A6B;
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .d2-gantt-track {
+      flex: 1;
+      height: 22px;
+      background: #F0F3FA;
+      border-radius: 4px;
+      position: relative;
+    }
+    .d2-gantt-bar {
+      position: absolute;
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* Geo Map */
+    .d2-geo-wrap {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .d2-geo-notice {
+      background: #F0F3FA;
+      border: 1px solid #E8EBF2;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #3D4A6B;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .d2-geo-bubble-chart {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .d2-geo-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .d2-geo-circle {
+      border-radius: 50%;
+      background: #2E7D6B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .d2-geo-name {
+      font-size: 10px;
+      color: #6B7899;
+      text-align: center;
+      max-width: 60px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 <body>
@@ -1889,6 +2159,9 @@
         </button>
         <button class="sidebar-nav-btn" type="button" id="sidebarReportsBtn">
           <span class="nav-icon">📊</span> Reports
+        </button>
+        <button class="sidebar-nav-btn" type="button" id="sidebarDashboard2Btn">
+          <span class="nav-icon">🔬</span> Dashboard 2
         </button>
       </div>
       <div class="sidebar-user">
@@ -2316,6 +2589,125 @@
       </section>
     </main>
 
+    <!-- ══════════════════════════════════════════════════════
+         DASHBOARD 2 — Universal Graph Set (independent tab)
+    ══════════════════════════════════════════════════════ -->
+
+    <!-- Dashboard 2 Upload State -->
+    <section id="uploadState2" class="home-page d2-upload hidden">
+      <div class="home-hero">
+        <div class="hero-left">
+          <div class="hero-badge">Universal Graph Set</div>
+          <h1 class="hero-title">15-Chart<br><span class="hero-accent">Analytics Suite</span></h1>
+          <p class="hero-subtitle">Upload any dataset to instantly generate all 15 industry-standard chart types — from KPIs and trend lines to treemaps, gauges, heatmaps, and geo maps.</p>
+          <button id="heroUploadBtn2" class="cta-primary" type="button">↥ Upload Dataset</button>
+          <input type="file" id="fileInput2" accept=".csv,.xlsx" class="hidden" />
+        </div>
+        <div class="hero-right">
+          <div class="hero-preview-card">
+            <div class="preview-chart-mini">
+              <div class="d2-preview-grid">
+                <div class="d2-pg-cell" style="background:#2E7D6B;opacity:.9;border-radius:6px;"></div>
+                <div class="d2-pg-cell" style="background:#1A2340;opacity:.7;border-radius:6px;"></div>
+                <div class="d2-pg-cell" style="background:#2E7D6B;opacity:.5;border-radius:6px;"></div>
+                <div class="d2-pg-cell" style="background:#1A2340;opacity:.4;border-radius:6px;"></div>
+                <div class="d2-pg-cell" style="background:#2E7D6B;opacity:.7;border-radius:6px;"></div>
+                <div class="d2-pg-cell" style="background:#1A2340;opacity:.9;border-radius:6px;"></div>
+              </div>
+            </div>
+            <p style="font-size:12px;color:#6B7899;margin:10px 0 0;text-align:center;">KPI · Line · Bar · Pie · Area · Heatmap · Treemap · Funnel · Gauge · Scatter · Combo · Gantt · Geo Map · AI Insights</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="dropZone2" class="drop-zone" role="button" tabindex="0" aria-label="Upload CSV or Excel dataset">
+        <div class="upload-icon">⬆</div>
+        <p class="upload-title">Drop your file here or click to browse</p>
+        <p class="upload-hint">Supports CSV and Excel (.xlsx) · All 15 chart types generated automatically</p>
+      </div>
+    </section>
+
+    <!-- Dashboard 2 Report Header -->
+    <header class="top-header hidden" id="dashboardHeader2">
+      <div class="brand">
+        <div class="brand-line">
+          <button id="backToHome2Btn" class="ghost-btn" type="button" style="min-height:36px;padding:0 14px;font-size:13px;display:inline-flex;align-items:center;gap:7px;">← Back</button>
+          <span id="domainIcon2" class="domain-icon" style="font-size:18px;">◈</span>
+          <h1 id="dashboardTitle2" class="title">Universal Graph Suite</h1>
+        </div>
+        <p id="dashboardSubtitle2" class="subtitle"></p>
+      </div>
+      <div class="header-actions">
+        <button id="exportHtmlBtn2" class="ghost-btn hidden" type="button">↓ HTML</button>
+        <button id="exportPdfBtn2" class="ghost-btn hidden" type="button">↓ PDF</button>
+      </div>
+    </header>
+
+    <!-- Dashboard 2 Filters -->
+    <section id="filtersBar2" class="filters-bar hidden">
+      <div id="filtersWrap2" class="filters-wrap"></div>
+      <div id="customFilter2" class="custom-filter" aria-label="Custom filter">
+        <div class="filter-field">
+          <label for="customFilterColumn2">Custom column</label>
+          <select id="customFilterColumn2"></select>
+        </div>
+        <div class="filter-field">
+          <label for="customFilterValue2">Custom value</label>
+          <select id="customFilterValue2" disabled></select>
+        </div>
+      </div>
+      <button id="resetFiltersBtn2" class="ghost-btn" type="button">Reset</button>
+    </section>
+
+    <!-- Dashboard 2 Main -->
+    <main id="dashboardMain2" class="dashboard-main hidden">
+      <!-- Row 1: KPI Cards -->
+      <section id="kpiGrid2" class="kpi-grid"></section>
+
+      <!-- Row 2: Line + Area -->
+      <div class="section-head"><h2 class="section-title">Trend Charts</h2></div>
+      <div id="trendArea2" class="chart-row layout-feature"></div>
+
+      <!-- Row 3: Bar + Horizontal Bar + Donut -->
+      <div class="section-head"><h2 class="section-title">Distribution & Comparison</h2></div>
+      <div id="distArea2" class="chart-row layout-three"></div>
+
+      <!-- Row 4: Scatter + Combo -->
+      <div class="section-head"><h2 class="section-title">Correlation & Combo</h2></div>
+      <div id="scatterArea2" class="chart-row layout-feature"></div>
+
+      <!-- Row 5: Heatmap + Treemap -->
+      <div class="section-head"><h2 class="section-title">Composition & Density</h2></div>
+      <div id="heatmapArea2" class="chart-row layout-feature"></div>
+
+      <!-- Row 6: Funnel + Gauge -->
+      <div class="section-head"><h2 class="section-title">Funnel & Performance</h2></div>
+      <div id="funnelArea2" class="chart-row layout-feature"></div>
+
+      <!-- Row 7: Gantt -->
+      <div class="section-head"><h2 class="section-title">Timeline (Gantt)</h2></div>
+      <div id="ganttArea2" class="chart-row layout-feature"></div>
+
+      <!-- Row 8: Geo Map placeholder -->
+      <div class="section-head"><h2 class="section-title">Geographic Distribution</h2></div>
+      <div id="geoArea2" class="chart-row layout-feature"></div>
+
+      <!-- AI Insights -->
+      <div class="section-head"><h2 class="section-title">AI Insights</h2></div>
+      <section id="insightsGrid2" class="insights-grid"></section>
+
+      <!-- Table -->
+      <section class="table-card">
+        <h3>Top 10 Records</h3>
+        <div class="table-wrap">
+          <table>
+            <thead id="tableHead2"></thead>
+            <tbody id="tableBody2"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
     </div><!-- end page-content -->
   </div><!-- end mainApp -->
 
@@ -2406,6 +2798,14 @@
 
       /* Wire all app listeners once after login shows mainApp */
       function showHomePage() {
+        // hide D2
+        els2.uploadState.classList.add("hidden");
+        els2.dashboardHeader.classList.add("hidden");
+        els2.dashboardMain.classList.add("hidden");
+        els2.filtersBar.classList.add("hidden");
+        els2.exportHtmlBtn.classList.add("hidden");
+        els2.exportPdfBtn.classList.add("hidden");
+        // show D1 upload
         document.getElementById("uploadState").classList.remove("hidden");
         document.getElementById("dashboardHeader").classList.add("hidden");
         document.getElementById("dashboardMain").classList.add("hidden");
@@ -2414,10 +2814,19 @@
         document.getElementById("exportPdfBtn").classList.add("hidden");
         document.getElementById("sidebarDashboardBtn").classList.add("active");
         document.getElementById("sidebarReportsBtn").classList.remove("active");
+        document.getElementById("sidebarDashboard2Btn").classList.remove("active");
       }
 
       function showReportPage() {
         if (!window._hasReport) { return; }
+        // hide D2
+        els2.uploadState.classList.add("hidden");
+        els2.dashboardHeader.classList.add("hidden");
+        els2.dashboardMain.classList.add("hidden");
+        els2.filtersBar.classList.add("hidden");
+        els2.exportHtmlBtn.classList.add("hidden");
+        els2.exportPdfBtn.classList.add("hidden");
+        // show D1 report
         document.getElementById("uploadState").classList.add("hidden");
         document.getElementById("dashboardHeader").classList.remove("hidden");
         document.getElementById("dashboardMain").classList.remove("hidden");
@@ -2426,12 +2835,14 @@
         document.getElementById("exportPdfBtn").classList.remove("hidden");
         document.getElementById("sidebarDashboardBtn").classList.remove("active");
         document.getElementById("sidebarReportsBtn").classList.add("active");
+        document.getElementById("sidebarDashboard2Btn").classList.remove("active");
       }
 
       document.getElementById("sidebarDashboardBtn").addEventListener("click", showHomePage);
       document.getElementById("sidebarReportsBtn").addEventListener("click", showReportPage);
 
       function wireAppListeners() {
+        wireD2Listeners();
         updateApiKeyUI();
         els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
         els.skipKeyBtn.addEventListener("click", () => {
@@ -4033,6 +4444,605 @@ RULES:
       err.userMessage = message;
       err.cause = cause;
       return err;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       DASHBOARD 2 — Universal 15-Chart Suite (independent state)
+    ═══════════════════════════════════════════════════════════ */
+    let RAW_DATA2 = [];
+    let FILTERED_DATA2 = [];
+    let CURRENT_SPEC2 = null;
+    let CURRENT_TITLE2 = "Universal Graph Suite";
+    const CHARTS2 = {};
+    let fmt2 = n => n;
+
+    const D2_COLORS = ["#2E7D6B","#1A2340","#4A9B87","#2D4A8A","#3DAA90","#162050","#5BB8A3","#3558A8","#1F6B5C","#233070"];
+
+    const els2 = {
+      uploadState:       document.getElementById("uploadState2"),
+      dropZone:          document.getElementById("dropZone2"),
+      fileInput:         document.getElementById("fileInput2"),
+      heroUploadBtn:     document.getElementById("heroUploadBtn2"),
+      dashboardHeader:   document.getElementById("dashboardHeader2"),
+      dashboardTitle:    document.getElementById("dashboardTitle2"),
+      dashboardSubtitle: document.getElementById("dashboardSubtitle2"),
+      domainIcon:        document.getElementById("domainIcon2"),
+      filtersBar:        document.getElementById("filtersBar2"),
+      filtersWrap:       document.getElementById("filtersWrap2"),
+      customFilterColumn:document.getElementById("customFilterColumn2"),
+      customFilterValue: document.getElementById("customFilterValue2"),
+      resetFiltersBtn:   document.getElementById("resetFiltersBtn2"),
+      dashboardMain:     document.getElementById("dashboardMain2"),
+      kpiGrid:           document.getElementById("kpiGrid2"),
+      trendArea:         document.getElementById("trendArea2"),
+      distArea:          document.getElementById("distArea2"),
+      scatterArea:       document.getElementById("scatterArea2"),
+      heatmapArea:       document.getElementById("heatmapArea2"),
+      funnelArea:        document.getElementById("funnelArea2"),
+      ganttArea:         document.getElementById("ganttArea2"),
+      geoArea:           document.getElementById("geoArea2"),
+      insightsGrid:      document.getElementById("insightsGrid2"),
+      tableHead:         document.getElementById("tableHead2"),
+      tableBody:         document.getElementById("tableBody2"),
+      exportHtmlBtn:     document.getElementById("exportHtmlBtn2"),
+      exportPdfBtn:      document.getElementById("exportPdfBtn2")
+    };
+
+    /* ── Navigation helpers for Dashboard 2 ── */
+    function showD2Home() {
+      els2.uploadState.classList.remove("hidden");
+      els2.dashboardHeader.classList.add("hidden");
+      els2.dashboardMain.classList.add("hidden");
+      els2.filtersBar.classList.add("hidden");
+      els2.exportHtmlBtn.classList.add("hidden");
+      els2.exportPdfBtn.classList.add("hidden");
+    }
+
+    function showD2Report() {
+      if (!window._hasReport2) return;
+      els2.uploadState.classList.add("hidden");
+      els2.dashboardHeader.classList.remove("hidden");
+      els2.dashboardMain.classList.remove("hidden");
+      els2.filtersBar.classList.remove("hidden");
+      els2.exportHtmlBtn.classList.remove("hidden");
+      els2.exportPdfBtn.classList.remove("hidden");
+    }
+
+    /* ── Wire Dashboard 2 listeners (called from wireAppListeners) ── */
+    function wireD2Listeners() {
+      document.getElementById("sidebarDashboard2Btn").addEventListener("click", () => {
+        hideAllViews();
+        document.getElementById("sidebarDashboardBtn").classList.remove("active");
+        document.getElementById("sidebarReportsBtn").classList.remove("active");
+        document.getElementById("sidebarDashboard2Btn").classList.add("active");
+        window._hasReport2 ? showD2Report() : showD2Home();
+      });
+      document.getElementById("backToHome2Btn").addEventListener("click", () => { showD2Home(); });
+      els2.heroUploadBtn.addEventListener("click", () => els2.fileInput.click());
+      els2.dropZone.addEventListener("click", () => els2.fileInput.click());
+      els2.dropZone.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") els2.fileInput.click(); });
+      ["dragenter","dragover"].forEach(t => els2.dropZone.addEventListener(t, e => { e.preventDefault(); els2.dropZone.classList.add("drag-over"); }));
+      ["dragleave","drop"].forEach(t => els2.dropZone.addEventListener(t, e => { e.preventDefault(); els2.dropZone.classList.remove("drag-over"); }));
+      els2.dropZone.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) handleFile2(f); });
+      els2.fileInput.addEventListener("change", e => { const f = e.target.files[0]; if (f) handleFile2(f); e.target.value = ""; });
+      els2.customFilterColumn.addEventListener("change", updateCustomFilterValues2);
+      els2.customFilterValue.addEventListener("change", applyFilters2);
+      els2.resetFiltersBtn.addEventListener("click", resetFilters2);
+      els2.exportHtmlBtn.addEventListener("click", () => {
+        const html = "<!DOCTYPE html>" + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: "text/html" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = CURRENT_TITLE2.replace(/\s+/g,"_") + "_d2.html"; a.click(); URL.revokeObjectURL(a.href);
+      });
+      els2.exportPdfBtn.addEventListener("click", async () => {
+        showLoading("Preparing PDF…");
+        try {
+          const canvas = await html2canvas(els2.dashboardMain, { scale: 2, backgroundColor: "#F8F9FC", useCORS: true });
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: [canvas.width/2, canvas.height/2] });
+          pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, canvas.width/2, canvas.height/2);
+          pdf.save(CURRENT_TITLE2.replace(/\s+/g,"_") + "_d2.pdf");
+        } finally { hideLoading(); }
+      });
+    }
+
+    /* hides all D1 + D2 views so we can cleanly switch tabs */
+    function hideAllViews() {
+      ["uploadState","dashboardHeader","dashboardMain","filtersBar"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+      document.getElementById("exportHtmlBtn").classList.add("hidden");
+      document.getElementById("exportPdfBtn").classList.add("hidden");
+      els2.uploadState.classList.add("hidden");
+      els2.dashboardHeader.classList.add("hidden");
+      els2.dashboardMain.classList.add("hidden");
+      els2.filtersBar.classList.add("hidden");
+      els2.exportHtmlBtn.classList.add("hidden");
+      els2.exportPdfBtn.classList.add("hidden");
+    }
+
+    /* ── File handler ── */
+    async function handleFile2(file) {
+      try {
+        showLoading("Building Universal Graph Suite…");
+        Object.keys(CHARTS2).forEach(id => { if (CHARTS2[id]) { CHARTS2[id].destroy(); delete CHARTS2[id]; } });
+        const parsed = await parseFile(file);
+        RAW_DATA2 = parsed.rows;
+        FILTERED_DATA2 = [...RAW_DATA2];
+        const colSummary = classifyColumns(RAW_DATA2);
+        const spec = buildLocalDashboardSpec(parsed.filename, colSummary, RAW_DATA2);
+        ensureSpecFilters(spec, RAW_DATA2, colSummary);
+        const columnNames = Object.keys(RAW_DATA2[0] || {});
+        validateSpec(spec, columnNames, RAW_DATA2);
+        spec.title = buildReportTitle(parsed.filename);
+        CURRENT_SPEC2 = spec;
+        CURRENT_TITLE2 = spec.title;
+        fmt2 = buildFormatter(spec);
+        populateFilters2(spec, RAW_DATA2);
+        renderAll2(spec, FILTERED_DATA2);
+        window._hasReport2 = true;
+        els2.dashboardTitle.textContent = spec.title;
+        els2.dashboardSubtitle.textContent = `${RAW_DATA2.length.toLocaleString()} records analysed from ${parsed.filename}`;
+        els2.domainIcon.textContent = spec.domainIcon || "◈";
+        showD2Report();
+        els2.exportHtmlBtn.classList.remove("hidden");
+        els2.exportPdfBtn.classList.remove("hidden");
+        showToast("Universal Graph Suite generated", "success");
+      } catch (err) {
+        showToast(err && err.userMessage ? err.userMessage : "Error generating Dashboard 2", "error");
+      } finally { hideLoading(); }
+    }
+
+    /* ── Master render ── */
+    function renderAll2(spec, data) {
+      renderKPIs2(spec, data);
+      renderTrend2(spec, data);
+      renderDist2(spec, data);
+      renderScatter2(spec, data);
+      renderHeatmap2(spec, data);
+      renderFunnel2(spec, data);
+      renderGantt2(spec, data);
+      renderGeo2(spec, data);
+      renderInsights2(spec);
+      renderTable2(spec, data);
+    }
+
+    /* ── KPIs (reuse D1 logic, render into kpiGrid2) ── */
+    function renderKPIs2(spec, data) {
+      els2.kpiGrid.replaceChildren();
+      spec.kpis.slice(0, 6).forEach((kpi, i) => {
+        const card = document.createElement("article");
+        card.className = "kpi-card";
+        card.style.setProperty("--accent", D2_COLORS[i % D2_COLORS.length]);
+        const top = document.createElement("div"); top.className = "kpi-top";
+        const lbl = document.createElement("p"); lbl.className = "kpi-label"; lbl.textContent = kpi.label || kpi.column;
+        const ico = document.createElement("div"); ico.className = "kpi-icon"; ico.textContent = kpi.icon || "◆";
+        top.append(lbl, ico);
+        const val = document.createElement("div"); val.className = "kpi-value";
+        val.textContent = formatMeasure(computeKPI(kpi, data), kpi.column, kpi.aggregation);
+        const badge = document.createElement("span");
+        badge.className = `badge ${safeClass(kpi.badgeClass || "neutral")}`;
+        badge.textContent = kpi.badgeText || `${data.length.toLocaleString()} rows`;
+        card.append(top, val, badge);
+        els2.kpiGrid.appendChild(card);
+      });
+    }
+
+    /* ── Helper: make a chart card container ── */
+    function makeD2Card(title, desc, tag, container) {
+      const card = document.createElement("article"); card.className = "chart-card";
+      const head = document.createElement("div"); head.className = "chart-head";
+      const tw = document.createElement("div");
+      const h3 = document.createElement("h3"); h3.textContent = title;
+      const p = document.createElement("p"); p.textContent = desc || "";
+      tw.append(h3, p);
+      const t = document.createElement("span"); t.className = "chart-tag"; t.textContent = tag;
+      head.append(tw, t);
+      const box = document.createElement("div"); box.className = "chart-box";
+      if (container) box.appendChild(container);
+      card.append(head, box);
+      return { card, box };
+    }
+
+    /* ── Helper: Chart.js canvas card ── */
+    function makeCanvasCard(id, title, desc, tag, area) {
+      const { card, box } = makeD2Card(title, desc, tag);
+      const canvas = document.createElement("canvas"); canvas.id = id;
+      box.appendChild(canvas);
+      area.appendChild(card);
+      return canvas;
+    }
+
+    /* ── 1. LINE CHART ── */
+    function renderTrend2(spec, data) {
+      els2.trendArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const metric = chooseMetricColumn(colSummary, Object.keys(data[0]||{}));
+      const dateCol = colSummary.date[0] || chooseCategoryColumn(colSummary, data, Object.keys(data[0]||{}));
+
+      // Line
+      const lineCanvas = makeCanvasCard("d2_line", `${toTitleLabel(metric)} Trend`, `Over ${toTitleLabel(dateCol)}`, "Line", els2.trendArea);
+      // Area
+      const areaCanvas = makeCanvasCard("d2_area", `${toTitleLabel(metric)} Area`, `Cumulative view over ${toTitleLabel(dateCol)}`, "Area", els2.trendArea);
+
+      requestAnimationFrame(() => {
+        const chartData = data.some(r => isDateLike(r[dateCol]))
+          ? aggregateByMonth(data, { groupBy: dateCol, valueColumn: metric, aggregation: "sum" })
+          : (() => { const agg = aggregate(data, dateCol, metric, "sum"); const e = Object.entries(agg).slice(0,12); return { labels: e.map(([l])=>l), values: e.map(([,v])=>v) }; })();
+
+        if (CHARTS2["d2_line"]) CHARTS2["d2_line"].destroy();
+        CHARTS2["d2_line"] = new Chart(lineCanvas.getContext("2d"), {
+          type: "line",
+          data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[0], borderWidth: 2.5, tension: 0.38, pointRadius: 4, fill: false, backgroundColor: "transparent" }] },
+          options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false}, tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt2(ctx.parsed.y)}` } } }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
+        });
+
+        if (CHARTS2["d2_area"]) CHARTS2["d2_area"].destroy();
+        CHARTS2["d2_area"] = new Chart(areaCanvas.getContext("2d"), {
+          type: "line",
+          data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[2], borderWidth: 2, tension: 0.38, fill: true, backgroundColor: "rgba(46,125,107,0.15)", pointRadius: 3 }] },
+          options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
+        });
+      });
+    }
+
+    /* ── 2. BAR + HORIZONTAL BAR + DONUT/PIE ── */
+    function renderDist2(spec, data) {
+      els2.distArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const metric = chooseMetricColumn(colSummary, cols);
+      const cat = chooseCategoryColumn(colSummary, data, cols);
+      const agg = aggregate(data, cat, metric, "sum");
+      const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,10);
+      const labels = entries.map(([l])=>l), values = entries.map(([,v])=>v);
+
+      const barCanvas = makeCanvasCard("d2_bar", `${toTitleLabel(metric)} by ${toTitleLabel(cat)}`, "Vertical bar comparison", "Bar", els2.distArea);
+      const hbarCanvas = makeCanvasCard("d2_hbar", `Top ${toTitleLabel(cat)}`, "Ranked horizontal view", "Horizontal Bar", els2.distArea);
+      const donutCanvas = makeCanvasCard("d2_donut", `${toTitleLabel(cat)} Distribution`, "Share breakdown", "Donut", els2.distArea);
+
+      requestAnimationFrame(() => {
+        [["d2_bar", barCanvas, "bar", false], ["d2_hbar", hbarCanvas, "bar", true], ["d2_donut", donutCanvas, "doughnut", false]].forEach(([id, canvas, type, horiz]) => {
+          if (CHARTS2[id]) CHARTS2[id].destroy();
+          const isDonut = type === "doughnut";
+          CHARTS2[id] = new Chart(canvas.getContext("2d"), {
+            type,
+            data: { labels, datasets: [{ data: values, backgroundColor: isDonut ? labels.map((_,i)=>D2_COLORS[i%D2_COLORS.length]) : D2_COLORS[0], borderColor: isDonut ? labels.map((_,i)=>D2_COLORS[i%D2_COLORS.length]) : D2_COLORS[0], borderWidth: isDonut ? 2 : 1, borderRadius: horiz||isDonut ? 0 : 7, cutout: isDonut ? "60%" : undefined }] },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis: horiz?"y":"x", layout:{padding: horiz?{right:70}:{top:26}}, plugins:{ legend:{display:isDonut, position:"bottom", labels:{boxWidth:10,usePointStyle:true}}, datalabels:{ display: isDonut||horiz, formatter: v => fmt2(v), color: isDonut?"#fff":"#1A2340", font:{size:10,weight:"700"}, anchor:"end", align: horiz?"end":"top", offset:4 }, tooltip:{ callbacks:{ label: ctx => `${ctx.label||""}: ${fmt2(ctx.parsed[horiz?"x":"y"]||ctx.raw||0)}` } } }, scales: isDonut ? {} : { x:{stacked:false,grid:{display:horiz?false:false}}, y:{beginAtZero:true} } }
+          });
+        });
+      });
+    }
+
+    /* ── 3. SCATTER + COMBO (Line + Bar) ── */
+    function renderScatter2(spec, data) {
+      els2.scatterArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const nums = colSummary.numeric;
+      const xCol = nums[0] || cols[0], yCol = nums[1] || nums[0] || cols[0];
+      const cat = chooseCategoryColumn(colSummary, data, cols);
+
+      const scatterCanvas = makeCanvasCard("d2_scatter", `${toTitleLabel(xCol)} vs ${toTitleLabel(yCol)}`, "Correlation scatter plot", "Scatter", els2.scatterArea);
+      const comboCanvas = makeCanvasCard("d2_combo", `${toTitleLabel(xCol)} Trend & Volume`, "Combo: line + bar overlay", "Combo", els2.scatterArea);
+
+      requestAnimationFrame(() => {
+        const scatterPts = data.slice(0,200).map(r => ({ x: parseNumber(r[xCol]), y: parseNumber(r[yCol]) })).filter(p => p.x!==0||p.y!==0);
+        if (CHARTS2["d2_scatter"]) CHARTS2["d2_scatter"].destroy();
+        CHARTS2["d2_scatter"] = new Chart(scatterCanvas.getContext("2d"), {
+          type: "scatter",
+          data: { datasets: [{ label: `${xCol} vs ${yCol}`, data: scatterPts, backgroundColor: "rgba(46,125,107,0.55)", borderColor: D2_COLORS[0], pointRadius: 4, pointHoverRadius: 6 }] },
+          options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, datalabels:{display:false} }, scales:{ x:{title:{display:true,text:xCol},grid:{color:"rgba(26,35,64,.06)"}}, y:{title:{display:true,text:yCol},beginAtZero:true} } }
+        });
+
+        const comboAgg = aggregate(data, cat, xCol, "sum");
+        const comboEntries = Object.entries(comboAgg).sort(([,a],[,b])=>b-a).slice(0,10);
+        const cl = comboEntries.map(([l])=>l), cv = comboEntries.map(([,v])=>v);
+        const yAgg = aggregate(data, cat, yCol, "average");
+        const cv2 = cl.map(l => yAgg[l]||0);
+        if (CHARTS2["d2_combo"]) CHARTS2["d2_combo"].destroy();
+        CHARTS2["d2_combo"] = new Chart(comboCanvas.getContext("2d"), {
+          type: "bar",
+          data: { labels: cl, datasets: [
+            { type:"bar",  label: xCol, data: cv,  backgroundColor: "rgba(46,125,107,0.7)", borderRadius:6, yAxisID:"y" },
+            { type:"line", label: yCol, data: cv2, borderColor: D2_COLORS[1], borderWidth:2.5, tension:.4, pointRadius:4, fill:false, yAxisID:"y1" }
+          ]},
+          options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:true,position:"top",labels:{boxWidth:10,usePointStyle:true}}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true,grid:{color:"rgba(26,35,64,.06)"},title:{display:true,text:xCol}}, y1:{beginAtZero:true,position:"right",grid:{display:false},title:{display:true,text:yCol}} } }
+        });
+      });
+    }
+
+    /* ── 4. HEATMAP + TREEMAP ── */
+    function renderHeatmap2(spec, data) {
+      els2.heatmapArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const cat = chooseCategoryColumn(colSummary, data, cols);
+      const metric = chooseMetricColumn(colSummary, cols);
+      const secCat = colSummary.categorical.find(c => c !== cat) || cat;
+
+      // Heatmap card
+      const { card: hmCard, box: hmBox } = makeD2Card(`${toTitleLabel(cat)} × ${toTitleLabel(secCat)}`, "Value intensity heatmap", "Heatmap");
+      hmBox.style.height = "auto";
+      hmBox.style.overflow = "auto";
+      const hmWrap = document.createElement("div"); hmWrap.className = "d2-heatmap-wrap";
+      const rows = uniqueValues(data, cat).slice(0,8);
+      const cols2 = uniqueValues(data, secCat).slice(0,8);
+      const table = document.createElement("table"); table.className = "d2-heatmap-table";
+      const thead = document.createElement("thead"), tbody = document.createElement("tbody");
+      const hrow = document.createElement("tr");
+      const cornerTh = document.createElement("th"); cornerTh.textContent = ""; hrow.appendChild(cornerTh);
+      cols2.forEach(c => { const th = document.createElement("th"); th.textContent = c.length>8?c.slice(0,8)+"…":c; hrow.appendChild(th); });
+      thead.appendChild(hrow); table.appendChild(thead);
+
+      // compute cell values
+      const cellMap = {};
+      data.forEach(r => {
+        const rk = String(r[cat]||""), ck = String(r[secCat]||"");
+        if (!cellMap[rk]) cellMap[rk] = {};
+        cellMap[rk][ck] = (cellMap[rk][ck]||0) + parseNumber(r[metric]);
+      });
+      const allVals = Object.values(cellMap).flatMap(o => Object.values(o));
+      const maxVal = Math.max(...allVals, 1);
+
+      rows.forEach(rk => {
+        const tr = document.createElement("tr");
+        const th = document.createElement("th"); th.className = "d2-heatmap-row-label"; th.textContent = rk.length>10?rk.slice(0,10)+"…":rk; tr.appendChild(th);
+        cols2.forEach(ck => {
+          const v = (cellMap[rk]||{})[ck]||0;
+          const pct = v/maxVal;
+          const td = document.createElement("td");
+          const r2 = Math.round(26 + pct*(26-26)), g2 = Math.round(75 + pct*(125-75)), b2 = Math.round(107 + pct*(107-107));
+          const alpha = 0.15 + pct*0.85;
+          td.style.background = `rgba(46,125,107,${alpha.toFixed(2)})`;
+          td.textContent = fmt2(v);
+          td.title = `${rk} × ${ck}: ${fmt2(v)}`;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      hmWrap.appendChild(table);
+      hmBox.appendChild(hmWrap);
+      els2.heatmapArea.appendChild(hmCard);
+
+      // Treemap card
+      const { card: tmCard, box: tmBox } = makeD2Card(`${toTitleLabel(cat)} Treemap`, "Proportional area by value", "Treemap");
+      tmBox.style.height = "auto";
+      const agg = aggregate(data, cat, metric, "sum");
+      const tmEntries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,12);
+      const total = tmEntries.reduce((s,[,v])=>s+v,0)||1;
+      const tmDiv = document.createElement("div"); tmDiv.className = "d2-treemap";
+      tmEntries.forEach(([label, val], i) => {
+        const pct = val/total;
+        const cell = document.createElement("div"); cell.className = "d2-treemap-cell";
+        const wPct = Math.max(10, pct * 100);
+        cell.style.cssText = `background:${D2_COLORS[i%D2_COLORS.length]};width:${Math.min(wPct,48)}%;height:${Math.max(40, 40+pct*160)}px;`;
+        const lbl = document.createElement("span"); lbl.className = "d2-treemap-label"; lbl.textContent = label.length>12?label.slice(0,12)+"…":label;
+        const vl = document.createElement("span"); vl.className = "d2-treemap-value"; vl.textContent = fmt2(val);
+        cell.append(lbl, vl);
+        cell.title = `${label}: ${fmt2(val)} (${(pct*100).toFixed(1)}%)`;
+        tmDiv.appendChild(cell);
+      });
+      tmBox.appendChild(tmDiv);
+      els2.heatmapArea.appendChild(tmCard);
+    }
+
+    /* ── 5. FUNNEL + GAUGE ── */
+    function renderFunnel2(spec, data) {
+      els2.funnelArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const cat = chooseCategoryColumn(colSummary, data, cols);
+      const metric = chooseMetricColumn(colSummary, cols);
+      const agg = aggregate(data, cat, metric, "sum");
+      const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,7);
+      const maxVal = entries[0]?.[1]||1;
+
+      // Funnel card
+      const { card: fnCard, box: fnBox } = makeD2Card(`${toTitleLabel(cat)} Funnel`, "Step-by-step drop-off", "Funnel");
+      fnBox.style.height = "auto";
+      const fnDiv = document.createElement("div"); fnDiv.className = "d2-funnel";
+      entries.forEach(([label, val], i) => {
+        const pct = val/maxVal;
+        const row = document.createElement("div"); row.className = "d2-funnel-row";
+        const lbl = document.createElement("div"); lbl.className = "d2-funnel-label"; lbl.textContent = label.length>14?label.slice(0,14)+"…":label;
+        const wrap = document.createElement("div"); wrap.className = "d2-funnel-bar-wrap";
+        const bar = document.createElement("div"); bar.className = "d2-funnel-bar";
+        bar.style.cssText = `width:${Math.max(12,pct*100)}%;background:${D2_COLORS[i%D2_COLORS.length]};`;
+        bar.textContent = fmt2(val);
+        wrap.appendChild(bar);
+        const pctSpan = document.createElement("div"); pctSpan.className = "d2-funnel-pct"; pctSpan.textContent = (pct*100).toFixed(0)+"%";
+        row.append(lbl, wrap, pctSpan);
+        fnDiv.appendChild(row);
+      });
+      fnBox.appendChild(fnDiv);
+      els2.funnelArea.appendChild(fnCard);
+
+      // Gauge card
+      const { card: gCard, box: gBox } = makeD2Card("Performance Gauge", "Progress toward maximum", "Gauge");
+      gBox.style.height = "auto";
+      const nums = colSummary.numeric;
+      const gMetric = nums[0]||cols[0];
+      const gSum = data.reduce((s,r)=>s+parseNumber(r[gMetric]),0);
+      const gMax = Math.max(...data.map(r=>parseNumber(r[gMetric])),1)*data.length;
+      const gPct = Math.min(1, gSum/gMax);
+      const gWrap = document.createElement("div"); gWrap.className = "d2-gauge-wrap";
+      const angle = gPct * Math.PI;
+      const cx=100, cy=90, r2=70;
+      const startX = cx-r2, startY = cy;
+      const endX = cx + r2*Math.cos(Math.PI-angle), endY = cy - r2*Math.sin(angle);
+      const largeArc = angle>Math.PI/2?1:0;
+      const svgNS="http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS,"svg"); svg.setAttribute("viewBox","0 0 200 110"); svg.setAttribute("width","200"); svg.setAttribute("height","110"); svg.className="d2-gauge-svg";
+      const bg = document.createElementNS(svgNS,"path"); bg.setAttribute("d",`M ${startX} ${cy} A ${r2} ${r2} 0 0 1 ${cx+r2} ${cy}`); bg.setAttribute("fill","none"); bg.setAttribute("stroke","#E8EBF2"); bg.setAttribute("stroke-width","14"); bg.setAttribute("stroke-linecap","round");
+      const fg = document.createElementNS(svgNS,"path"); fg.setAttribute("d",`M ${startX} ${cy} A ${r2} ${r2} 0 ${largeArc} 1 ${endX} ${endY}`); fg.setAttribute("fill","none"); fg.setAttribute("stroke",D2_COLORS[0]); fg.setAttribute("stroke-width","14"); fg.setAttribute("stroke-linecap","round");
+      svg.append(bg, fg);
+      const gVal = document.createElement("div"); gVal.className = "d2-gauge-value"; gVal.textContent = (gPct*100).toFixed(1)+"%";
+      const gLbl = document.createElement("div"); gLbl.className = "d2-gauge-label"; gLbl.textContent = `${toTitleLabel(gMetric)} utilisation`;
+      gWrap.append(svg, gVal, gLbl);
+      gBox.appendChild(gWrap);
+      els2.funnelArea.appendChild(gCard);
+    }
+
+    /* ── 6. GANTT ── */
+    function renderGantt2(spec, data) {
+      els2.ganttArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const cat = chooseCategoryColumn(colSummary, data, cols);
+      const metric = chooseMetricColumn(colSummary, cols);
+      const { card: gCard, box: gBox } = makeD2Card(`${toTitleLabel(cat)} Timeline`, "Duration-based Gantt view", "Gantt");
+      gBox.style.height = "auto";
+      const wrap = document.createElement("div"); wrap.className = "d2-gantt-wrap";
+      const agg = aggregate(data, cat, metric, "sum");
+      const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,10);
+      const maxVal = Math.max(...entries.map(([,v])=>v),1);
+      // Simulate Gantt: each category gets a bar whose start and width are based on relative values
+      const totals = entries.map(([,v])=>v);
+      const cumulative = totals.reduce((acc,v,i) => { acc.push((acc[i-1]||0)+v); return acc; }, []);
+      const grandTotal = cumulative[cumulative.length-1]||1;
+      const header = document.createElement("div"); header.className = "d2-gantt-header";
+      ["Q1","Q2","Q3","Q4"].forEach(q=>{ const l = document.createElement("div"); l.className="d2-gantt-col-label"; l.textContent=q; header.appendChild(l); });
+      wrap.appendChild(header);
+      entries.forEach(([label, val], i) => {
+        const row = document.createElement("div"); row.className = "d2-gantt-row";
+        const taskLabel = document.createElement("div"); taskLabel.className = "d2-gantt-task-label"; taskLabel.textContent = label; taskLabel.title = label;
+        const track = document.createElement("div"); track.className = "d2-gantt-track";
+        const startPct = i===0 ? 0 : (cumulative[i-1]/grandTotal)*100;
+        const widthPct = (val/grandTotal)*100;
+        const bar = document.createElement("div"); bar.className = "d2-gantt-bar";
+        bar.style.cssText = `left:${startPct.toFixed(1)}%;width:${Math.max(widthPct,4).toFixed(1)}%;background:${D2_COLORS[i%D2_COLORS.length]};`;
+        bar.textContent = label.length>8?label.slice(0,8)+"…":label;
+        track.appendChild(bar);
+        row.append(taskLabel, track);
+        wrap.appendChild(row);
+      });
+      gBox.appendChild(wrap);
+      els2.ganttArea.appendChild(gCard);
+    }
+
+    /* ── 7. GEO MAP (bubble chart by location-like category) ── */
+    function renderGeo2(spec, data) {
+      els2.geoArea.replaceChildren();
+      const colSummary = classifyColumns(data);
+      const cols = Object.keys(data[0]||{});
+      const locCol = cols.find(c => /country|city|region|state|location|area|zone|territory|geo/i.test(c))
+        || chooseCategoryColumn(colSummary, data, cols);
+      const metric = chooseMetricColumn(colSummary, cols);
+      const { card: gCard, box: gBox } = makeD2Card(`${toTitleLabel(locCol)} Geographic Distribution`, "Bubble size = value magnitude", "Geo Map");
+      gBox.style.height = "auto";
+      const wrap = document.createElement("div"); wrap.className = "d2-geo-wrap";
+      const notice = document.createElement("div"); notice.className = "d2-geo-notice";
+      notice.innerHTML = `<span style="font-size:20px;">🗺️</span><span>Geographic distribution by <strong>${toTitleLabel(locCol)}</strong>. Bubble area is proportional to <strong>${toTitleLabel(metric)}</strong>.</span>`;
+      wrap.appendChild(notice);
+      const agg = aggregate(data, locCol, metric, "sum");
+      const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,16);
+      const maxVal = Math.max(...entries.map(([,v])=>v),1);
+      const bubbleArea = document.createElement("div"); bubbleArea.className = "d2-geo-bubble-chart";
+      entries.forEach(([label, val], i) => {
+        const pct = val/maxVal;
+        const size = Math.max(28, 28 + pct*62);
+        const bubble = document.createElement("div"); bubble.className = "d2-geo-bubble";
+        const circle = document.createElement("div"); circle.className = "d2-geo-circle";
+        circle.style.cssText = `width:${size}px;height:${size}px;background:${D2_COLORS[i%D2_COLORS.length]};font-size:${Math.max(9,size/5)}px;`;
+        circle.textContent = fmt2(val);
+        circle.title = `${label}: ${fmt2(val)}`;
+        const name = document.createElement("div"); name.className = "d2-geo-name"; name.textContent = label; name.title = label;
+        bubble.append(circle, name);
+        bubbleArea.appendChild(bubble);
+      });
+      wrap.appendChild(bubbleArea);
+      gBox.appendChild(wrap);
+      els2.geoArea.appendChild(gCard);
+    }
+
+    /* ── 8. AI INSIGHTS (same structure as D1) ── */
+    function renderInsights2(spec) {
+      els2.insightsGrid.replaceChildren();
+      spec.insights.forEach((insight, i) => {
+        const card = document.createElement("article"); card.className = "insight-card";
+        const header = document.createElement("div"); header.className = "insight-card-header";
+        const badge = document.createElement("span"); badge.className = "insight-icon-badge";
+        badge.textContent = insight.emoji || INSIGHT_EMOJIS[i % INSIGHT_EMOJIS.length];
+        const label = document.createElement("span"); label.className = "insight-label";
+        label.textContent = INSIGHT_LABELS[i % INSIGHT_LABELS.length];
+        header.append(badge, label);
+        const body = document.createElement("div"); body.className = "insight-card-body";
+        body.appendChild(sanitizeInsight(insight.text || ""));
+        card.append(header, body);
+        els2.insightsGrid.appendChild(card);
+      });
+    }
+
+    /* ── 9. TABLE ── */
+    function renderTable2(spec, data) {
+      els2.tableHead.replaceChildren(); els2.tableBody.replaceChildren();
+      const cols = (spec.tableColumns || Object.keys(data[0]||{})).slice(0,8);
+      const hr = document.createElement("tr");
+      cols.forEach(c => { const th = document.createElement("th"); th.textContent = c; hr.appendChild(th); });
+      els2.tableHead.appendChild(hr);
+      [...data].sort((a,b)=>parseNumber(b[spec.tableValueColumn])-parseNumber(a[spec.tableValueColumn])).slice(0,10).forEach(row => {
+        const tr = document.createElement("tr");
+        cols.forEach(c => {
+          const td = document.createElement("td");
+          const val = row[c]==null?"":String(row[c]);
+          if (spec.tableStatusColumn && c === spec.tableStatusColumn) {
+            const pill = document.createElement("span"); pill.className=`status-pill ${statusClass(val,spec)}`; pill.textContent=val; td.appendChild(pill);
+          } else { td.textContent = val; }
+          tr.appendChild(td);
+        });
+        els2.tableBody.appendChild(tr);
+      });
+    }
+
+    /* ── Filters for D2 ── */
+    function populateFilters2(spec, data) {
+      els2.filtersWrap.replaceChildren();
+      const columns = Object.keys(data[0]||{});
+      const colSummary = classifyColumns(data);
+      const filters = (spec.filters&&spec.filters.length?spec.filters:buildFilterSpecs(data,columns,colSummary)).filter(f => f.column && columns.includes(f.column) && uniqueValues(data,f.column).length>0);
+      filters.forEach(filter => {
+        const field = document.createElement("div"); field.className="filter-field";
+        const lbl = document.createElement("label"); lbl.textContent=filter.column;
+        const sel = document.createElement("select"); sel.dataset.column=filter.column;
+        const all = document.createElement("option"); all.value=""; all.textContent="All"; sel.appendChild(all);
+        uniqueValues(data,filter.column).slice(0,200).forEach(v => { const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); });
+        sel.addEventListener("change",applyFilters2);
+        field.append(lbl,sel); els2.filtersWrap.appendChild(field);
+      });
+      const allCols = columns;
+      els2.customFilterColumn.replaceChildren(optionFor("","Choose column"));
+      allCols.forEach(c => els2.customFilterColumn.appendChild(optionFor(c,c)));
+      updateCustomFilterValues2(false);
+    }
+
+    function updateCustomFilterValues2(shouldApply=true) {
+      const col = els2.customFilterColumn.value;
+      els2.customFilterValue.replaceChildren(optionFor("", col?"All values":"Choose column first"));
+      els2.customFilterValue.disabled = !col;
+      if (!col) { if(shouldApply) applyFilters2(); return; }
+      uniqueValues(RAW_DATA2, col).forEach(v => els2.customFilterValue.appendChild(optionFor(v,v)));
+      if(shouldApply) applyFilters2();
+    }
+
+    function applyFilters2() {
+      const selects = [...els2.filtersWrap.querySelectorAll("select")];
+      const cc = els2.customFilterColumn.value, cv = els2.customFilterValue.value;
+      FILTERED_DATA2 = RAW_DATA2.filter(row => {
+        const am = selects.every(s => !s.value || String(row[s.dataset.column])===s.value);
+        const cm = !cc || !cv || String(row[cc])===cv;
+        return am && cm;
+      });
+      if(CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
+    }
+
+    function resetFilters2() {
+      els2.filtersWrap.querySelectorAll("select").forEach(s=>s.value="");
+      els2.customFilterColumn.value=""; updateCustomFilterValues2();
+      FILTERED_DATA2 = [...RAW_DATA2];
+      if(CURRENT_SPEC2) renderAll2(CURRENT_SPEC2, FILTERED_DATA2);
     }
   </script>
 </body>

@@ -2236,11 +2236,11 @@
         <div id="loginError" class="login-error">Invalid email or password. Please try again.</div>
         <div class="login-form-group">
           <label for="loginEmail">Email address</label>
-          <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" />
+          <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" value="sri@test.com" />
         </div>
         <div class="login-form-group">
           <label for="loginPassword">Password</label>
-          <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+          <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" value="11111" />
         </div>
         <button id="loginBtn" class="login-submit-btn" type="button">Sign In</button>
         <div class="login-footer-note">Universal Dashboard Engine © 2025</div>
@@ -4753,63 +4753,186 @@ RULES:
       return canvas;
     }
 
-    /* ── 1. LINE CHART ── */
+    /* ── Compare group helper ──
+       Returns [{label, rows}] for each active compare value, or null if no compare active.
+       When a compare row has val1 + val2, returns two groups: one per value.
+       Multiple compare rows with different columns → intersection of those column filters per group.
+    ── */
+    function getCompareGroups2() {
+      const rows = [...els2.compareRows.querySelectorAll(".d2-compare-row")];
+      const active = rows.map(row => ({
+        col:  row.querySelector(".d2-compare-col-sel").value,
+        val1: row.querySelector(".d2-compare-val1-sel").value,
+        val2: row.querySelector(".d2-compare-val2-sel").value
+      })).filter(r => r.col && r.val1);
+
+      if (!active.length) return null;
+
+      // Collect all distinct (col, value) combos to form named groups
+      // Each compare row with val1+val2 → two groups
+      const groups = [];
+      active.forEach(rule => {
+        [rule.val1, rule.val2].filter(Boolean).forEach(val => {
+          const key = `${rule.col}::${val}`;
+          if (!groups.find(g => g.key === key)) {
+            groups.push({ key, col: rule.col, val, label: val });
+          }
+        });
+      });
+
+      // For each group, filter RAW_DATA2 to rows matching that group's col=val
+      // AND any other active compare rules that don't involve this group's column
+      return groups.map(g => {
+        const rows2 = RAW_DATA2.filter(row => {
+          // Must match this group's defining column=value
+          if (String(row[g.col] ?? "") !== g.val) return false;
+          // Must also satisfy other active rules (different columns only)
+          return active.every(rule => {
+            if (rule.col === g.col) return true; // already handled above
+            if (!rule.val1) return true;
+            const cell = String(row[rule.col] ?? "");
+            return cell === rule.val1 || (rule.val2 ? cell === rule.val2 : false);
+          });
+        });
+        return { label: g.label, col: g.col, rows: rows2 };
+      }).filter(g => g.rows.length > 0);
+    }
+
+    /* ── 1. LINE + AREA CHARTS (grouped when compare active) ── */
     function renderTrend2(spec, data) {
       els2.trendArea.replaceChildren();
-      const colSummary = classifyColumns(data);
+      const colSummary = classifyColumns(RAW_DATA2.length ? RAW_DATA2 : data);
       const metric = chooseMetricColumn(colSummary, Object.keys(data[0]||{}));
       const dateCol = colSummary.date[0] || chooseCategoryColumn(colSummary, data, Object.keys(data[0]||{}));
+      const groups = getCompareGroups2();
+      const isCompare = groups && groups.length > 1;
 
-      // Line
-      const lineCanvas = makeCanvasCard("d2_line", `${toTitleLabel(metric)} Trend`, `Over ${toTitleLabel(dateCol)}`, "Line", els2.trendArea);
-      // Area
-      const areaCanvas = makeCanvasCard("d2_area", `${toTitleLabel(metric)} Area`, `Cumulative view over ${toTitleLabel(dateCol)}`, "Area", els2.trendArea);
+      const lineCanvas = makeCanvasCard("d2_line",
+        isCompare ? `${toTitleLabel(metric)} Trend — Comparison` : `${toTitleLabel(metric)} Trend`,
+        isCompare ? `${groups.map(g=>g.label).join(" vs ")}` : `Over ${toTitleLabel(dateCol)}`,
+        "Line", els2.trendArea);
+      const areaCanvas = makeCanvasCard("d2_area",
+        isCompare ? `${toTitleLabel(metric)} Area — Comparison` : `${toTitleLabel(metric)} Area`,
+        isCompare ? `${groups.map(g=>g.label).join(" vs ")}` : `Cumulative view over ${toTitleLabel(dateCol)}`,
+        "Area", els2.trendArea);
 
       requestAnimationFrame(() => {
-        const chartData = data.some(r => isDateLike(r[dateCol]))
-          ? aggregateByMonth(data, { groupBy: dateCol, valueColumn: metric, aggregation: "sum" })
-          : (() => { const agg = aggregate(data, dateCol, metric, "sum"); const e = Object.entries(agg).slice(0,12); return { labels: e.map(([l])=>l), values: e.map(([,v])=>v) }; })();
+        function buildDataset(rowSet, idx, filled) {
+          const cd = rowSet.some(r => isDateLike(r[dateCol]))
+            ? aggregateByMonth(rowSet, { groupBy: dateCol, valueColumn: metric, aggregation: "sum" })
+            : (() => { const agg = aggregate(rowSet, dateCol, metric, "sum"); const e = Object.entries(agg).slice(0,12); return { labels: e.map(([l])=>l), values: e.map(([,v])=>v) }; })();
+          return { labels: cd.labels, values: cd.values };
+        }
 
-        if (CHARTS2["d2_line"]) CHARTS2["d2_line"].destroy();
-        CHARTS2["d2_line"] = new Chart(lineCanvas.getContext("2d"), {
-          type: "line",
-          data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[0], borderWidth: 2.5, tension: 0.38, pointRadius: 4, fill: false, backgroundColor: "transparent" }] },
-          options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false}, tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${fmt2(ctx.parsed.y)}` } } }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
-        });
+        if (isCompare) {
+          // Merge all group labels into a union label set
+          const allLabels = [...new Set(groups.flatMap(g => buildDataset(g.rows, 0, false).labels))];
+          const lineDatasets = groups.map((g, i) => {
+            const cd = buildDataset(g.rows, i, false);
+            const valMap = Object.fromEntries(cd.labels.map((l,j) => [l, cd.values[j]]));
+            return { label: g.label, data: allLabels.map(l => valMap[l] ?? 0), borderColor: D2_COLORS[i], borderWidth: 2.5, tension: 0.38, pointRadius: 4, fill: false, backgroundColor: "transparent" };
+          });
+          const areaDatasets = groups.map((g, i) => {
+            const cd = buildDataset(g.rows, i, true);
+            const valMap = Object.fromEntries(cd.labels.map((l,j) => [l, cd.values[j]]));
+            const alpha = ["rgba(46,125,107,0.15)","rgba(26,35,64,0.12)","rgba(74,155,135,0.15)","rgba(45,74,138,0.12)"][i] || "rgba(46,125,107,0.1)";
+            return { label: g.label, data: allLabels.map(l => valMap[l] ?? 0), borderColor: D2_COLORS[i], borderWidth: 2, tension: 0.38, fill: true, backgroundColor: alpha, pointRadius: 3 };
+          });
 
-        if (CHARTS2["d2_area"]) CHARTS2["d2_area"].destroy();
-        CHARTS2["d2_area"] = new Chart(areaCanvas.getContext("2d"), {
-          type: "line",
-          data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[2], borderWidth: 2, tension: 0.38, fill: true, backgroundColor: "rgba(46,125,107,0.15)", pointRadius: 3 }] },
-          options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
-        });
+          if (CHARTS2["d2_line"]) CHARTS2["d2_line"].destroy();
+          CHARTS2["d2_line"] = new Chart(lineCanvas.getContext("2d"), {
+            type: "line", data: { labels: allLabels, datasets: lineDatasets },
+            options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:true,position:"top",labels:{boxWidth:10,usePointStyle:true}}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true,grid:{color:"rgba(26,35,64,.06)"}} } }
+          });
+          if (CHARTS2["d2_area"]) CHARTS2["d2_area"].destroy();
+          CHARTS2["d2_area"] = new Chart(areaCanvas.getContext("2d"), {
+            type: "line", data: { labels: allLabels, datasets: areaDatasets },
+            options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:true,position:"top",labels:{boxWidth:10,usePointStyle:true}}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true,grid:{color:"rgba(26,35,64,.06)"}} } }
+          });
+        } else {
+          const chartData = buildDataset(data, 0, false);
+          if (CHARTS2["d2_line"]) CHARTS2["d2_line"].destroy();
+          CHARTS2["d2_line"] = new Chart(lineCanvas.getContext("2d"), {
+            type: "line",
+            data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[0], borderWidth: 2.5, tension: 0.38, pointRadius: 4, fill: false, backgroundColor: "transparent" }] },
+            options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
+          });
+          if (CHARTS2["d2_area"]) CHARTS2["d2_area"].destroy();
+          CHARTS2["d2_area"] = new Chart(areaCanvas.getContext("2d"), {
+            type: "line",
+            data: { labels: chartData.labels, datasets: [{ label: metric, data: chartData.values, borderColor: D2_COLORS[2], borderWidth: 2, tension: 0.38, fill: true, backgroundColor: "rgba(46,125,107,0.15)", pointRadius: 3 }] },
+            options: { responsive:true, maintainAspectRatio:false, layout:{padding:{top:20}}, plugins:{ legend:{display:false}, datalabels:{display:false} }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:"rgba(26,35,64,.06)"}} } }
+          });
+        }
       });
     }
 
-    /* ── 2. BAR + HORIZONTAL BAR + DONUT/PIE ── */
+    /* ── 2. BAR + HORIZONTAL BAR + DONUT (grouped when compare active) ── */
     function renderDist2(spec, data) {
       els2.distArea.replaceChildren();
-      const colSummary = classifyColumns(data);
+      const colSummary = classifyColumns(RAW_DATA2.length ? RAW_DATA2 : data);
       const cols = Object.keys(data[0]||{});
       const metric = chooseMetricColumn(colSummary, cols);
       const cat = chooseCategoryColumn(colSummary, data, cols);
-      const agg = aggregate(data, cat, metric, "sum");
-      const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,10);
-      const labels = entries.map(([l])=>l), values = entries.map(([,v])=>v);
+      const groups = getCompareGroups2();
+      const isCompare = groups && groups.length > 1;
 
-      const barCanvas = makeCanvasCard("d2_bar", `${toTitleLabel(metric)} by ${toTitleLabel(cat)}`, "Vertical bar comparison", "Bar", els2.distArea);
-      const hbarCanvas = makeCanvasCard("d2_hbar", `Top ${toTitleLabel(cat)}`, "Ranked horizontal view", "Horizontal Bar", els2.distArea);
+      const barCanvas  = makeCanvasCard("d2_bar",   isCompare ? `${toTitleLabel(metric)} — Grouped Comparison` : `${toTitleLabel(metric)} by ${toTitleLabel(cat)}`, isCompare ? groups.map(g=>g.label).join(" vs ") : "Vertical bar comparison", "Bar", els2.distArea);
+      const hbarCanvas = makeCanvasCard("d2_hbar",  isCompare ? `${toTitleLabel(metric)} — Horizontal Comparison` : `Top ${toTitleLabel(cat)}`, isCompare ? groups.map(g=>g.label).join(" vs ") : "Ranked horizontal view", "Horizontal Bar", els2.distArea);
       const donutCanvas = makeCanvasCard("d2_donut", `${toTitleLabel(cat)} Distribution`, "Share breakdown", "Donut", els2.distArea);
 
       requestAnimationFrame(() => {
-        [["d2_bar", barCanvas, "bar", false], ["d2_hbar", hbarCanvas, "bar", true], ["d2_donut", donutCanvas, "doughnut", false]].forEach(([id, canvas, type, horiz]) => {
-          if (CHARTS2[id]) CHARTS2[id].destroy();
-          const isDonut = type === "doughnut";
-          CHARTS2[id] = new Chart(canvas.getContext("2d"), {
-            type,
-            data: { labels, datasets: [{ data: values, backgroundColor: isDonut ? labels.map((_,i)=>D2_COLORS[i%D2_COLORS.length]) : D2_COLORS[0], borderColor: isDonut ? labels.map((_,i)=>D2_COLORS[i%D2_COLORS.length]) : D2_COLORS[0], borderWidth: isDonut ? 2 : 1, borderRadius: horiz||isDonut ? 0 : 7, cutout: isDonut ? "60%" : undefined }] },
-            options: { responsive:true, maintainAspectRatio:false, indexAxis: horiz?"y":"x", layout:{padding: horiz?{right:70}:{top:26}}, plugins:{ legend:{display:isDonut, position:"bottom", labels:{boxWidth:10,usePointStyle:true}}, datalabels:{ display: isDonut||horiz, formatter: v => fmt2(v), color: isDonut?"#fff":"#1A2340", font:{size:10,weight:"700"}, anchor:"end", align: horiz?"end":"top", offset:4 }, tooltip:{ callbacks:{ label: ctx => `${ctx.label||""}: ${fmt2(ctx.parsed[horiz?"x":"y"]||ctx.raw||0)}` } } }, scales: isDonut ? {} : { x:{stacked:false,grid:{display:horiz?false:false}}, y:{beginAtZero:true} } }
+        if (isCompare) {
+          // Grouped bar — X axis = numeric columns, series = compare groups
+          const numCols = colSummary.numeric.slice(0, 6);
+          const groupLabels = numCols.map(toTitleLabel);
+          const barDatasets = groups.map((g, i) => ({
+            label: g.label,
+            data: numCols.map(col => g.rows.reduce((s, r) => s + parseNumber(r[col]), 0) / Math.max(g.rows.length, 1)),
+            backgroundColor: D2_COLORS[i],
+            borderRadius: 6,
+            borderWidth: 0
+          }));
+          const hbarDatasets = groups.map((g, i) => ({
+            label: g.label,
+            data: numCols.map(col => g.rows.reduce((s, r) => s + parseNumber(r[col]), 0) / Math.max(g.rows.length, 1)),
+            backgroundColor: D2_COLORS[i],
+            borderRadius: 4,
+            borderWidth: 0
+          }));
+
+          [["d2_bar", barCanvas, false, barDatasets], ["d2_hbar", hbarCanvas, true, hbarDatasets]].forEach(([id, canvas, horiz, datasets]) => {
+            if (CHARTS2[id]) CHARTS2[id].destroy();
+            CHARTS2[id] = new Chart(canvas.getContext("2d"), {
+              type: "bar",
+              data: { labels: groupLabels, datasets },
+              options: { responsive:true, maintainAspectRatio:false, indexAxis: horiz?"y":"x", layout:{padding: horiz?{right:20}:{top:20}}, plugins:{ legend:{display:true,position:"top",labels:{boxWidth:10,usePointStyle:true}}, datalabels:{display:false}, tooltip:{ callbacks:{ label: ctx => `${ctx.dataset.label}: ${fmt2(ctx.parsed[horiz?"x":"y"]||0)}` } } }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true,grid:{color:"rgba(26,35,64,.06)"}} } }
+            });
           });
+        } else {
+          const agg = aggregate(data, cat, metric, "sum");
+          const entries = Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,10);
+          const labels = entries.map(([l])=>l), values = entries.map(([,v])=>v);
+          [["d2_bar", barCanvas, "bar", false], ["d2_hbar", hbarCanvas, "bar", true]].forEach(([id, canvas, type, horiz]) => {
+            if (CHARTS2[id]) CHARTS2[id].destroy();
+            CHARTS2[id] = new Chart(canvas.getContext("2d"), {
+              type,
+              data: { labels, datasets: [{ data: values, backgroundColor: D2_COLORS[0], borderWidth: 1, borderRadius: horiz ? 0 : 7 }] },
+              options: { responsive:true, maintainAspectRatio:false, indexAxis: horiz?"y":"x", layout:{padding: horiz?{right:70}:{top:26}}, plugins:{ legend:{display:false}, datalabels:{ display:horiz, formatter: v => fmt2(v), color:"#1A2340", font:{size:10,weight:"700"}, anchor:"end", align:"end", offset:4 }, tooltip:{ callbacks:{ label: ctx => `${ctx.label||""}: ${fmt2(ctx.parsed[horiz?"x":"y"]||0)}` } } }, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true} } }
+            });
+          });
+        }
+
+        // Donut always shows the filtered/full data distribution (not compare-split — donut already shows breakdown)
+        const donutData = isCompare
+          ? groups.map(g => ({ label: g.label, val: g.rows.reduce((s,r) => s + parseNumber(r[metric]), 0) }))
+          : (() => { const agg = aggregate(data, cat, metric, "sum"); return Object.entries(agg).sort(([,a],[,b])=>b-a).slice(0,8).map(([l,v]) => ({ label: l, val: v })); })();
+        const dLabels = donutData.map(d => d.label), dValues = donutData.map(d => d.val);
+        if (CHARTS2["d2_donut"]) CHARTS2["d2_donut"].destroy();
+        CHARTS2["d2_donut"] = new Chart(donutCanvas.getContext("2d"), {
+          type: "doughnut",
+          data: { labels: dLabels, datasets: [{ data: dValues, backgroundColor: dLabels.map((_,i) => D2_COLORS[i%D2_COLORS.length]), borderWidth: 2, cutout: "60%" }] },
+          options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:true,position:"bottom",labels:{boxWidth:10,usePointStyle:true}}, datalabels:{ display:true, formatter:(v,ctx) => { const t=ctx.dataset.data.reduce((a,b)=>a+b,0)||1; return ((v/t)*100).toFixed(1)+"%"; }, color:"#fff", font:{size:10,weight:"700"} } } }
         });
       });
     }

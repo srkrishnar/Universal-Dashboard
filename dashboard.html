@@ -249,6 +249,188 @@
       font-weight: 700;
     }
 
+    /* ── Login page ── */
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #F8F9FC;
+    }
+
+    .login-left {
+      background: linear-gradient(150deg, #1A2340 0%, #243060 60%, #1e4d6b 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 56px;
+      color: #fff;
+    }
+
+    .login-left-brand {
+      font-family: "Playfair Display", serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 56px;
+      line-height: 1.2;
+    }
+
+    .login-left-brand span {
+      color: #5BC8AC;
+    }
+
+    .login-left h1 {
+      margin: 0 0 18px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .login-left h1 span {
+      color: #5BC8AC;
+    }
+
+    .login-left p {
+      margin: 0 0 40px;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.6);
+      max-width: 32rem;
+    }
+
+    .login-feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .login-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .login-feature-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #5BC8AC;
+      flex: 0 0 auto;
+    }
+
+    .login-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 48px;
+      background: #fff;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card-header {
+      margin-bottom: 36px;
+    }
+
+    .login-card-header h2 {
+      margin: 0 0 8px;
+      font-family: "Playfair Display", serif;
+      font-size: 1.9rem;
+      color: #1A2340;
+    }
+
+    .login-card-header p {
+      margin: 0;
+      font-size: 14px;
+      color: #7A8499;
+    }
+
+    .login-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .login-form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3D4A63;
+      letter-spacing: 0.01em;
+    }
+
+    .login-form-group input {
+      height: 48px;
+      padding: 0 16px;
+      background: #F4F6FB;
+      border: 1.5px solid #E2E6F0;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #1A2340;
+      outline: none;
+      transition: border-color 150ms, box-shadow 150ms;
+    }
+
+    .login-form-group input:focus {
+      border-color: #5BC8AC;
+      box-shadow: 0 0 0 3px rgba(91,200,172,0.15);
+      background: #fff;
+    }
+
+    .login-error {
+      display: none;
+      padding: 12px 16px;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 10px;
+      color: #DC2626;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .login-error.visible {
+      display: block;
+    }
+
+    .login-submit-btn {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, #243060, #1e4d6b);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 150ms, transform 150ms;
+      margin-top: 4px;
+    }
+
+    .login-submit-btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .login-footer-note {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #A0AABB;
+    }
+
+    @media (max-width: 768px) {
+      .login-page { grid-template-columns: 1fr; }
+      .login-left { display: none; }
+    }
+
     /* ── Sidebar layout ── */
     .app-layout {
       display: flex;
@@ -261,29 +443,30 @@
       left: 0;
       bottom: 0;
       width: 240px;
-      background: #0F1117;
-      color: #fff;
+      background: #FFFFFF;
+      border-right: 1px solid #E8EBF2;
       display: flex;
       flex-direction: column;
       z-index: 30;
       overflow-y: auto;
+      box-shadow: 2px 0 12px rgba(26,35,64,0.05);
     }
 
     .sidebar-brand {
-      padding: 28px 22px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 26px 22px 18px;
+      border-bottom: 1px solid #F0F2F8;
     }
 
     .sidebar-brand h2 {
       margin: 0;
       font-family: "Playfair Display", serif;
-      font-size: 20px;
-      color: #fff;
+      font-size: 19px;
+      color: #1A2340;
       line-height: 1.2;
     }
 
     .sidebar-brand h2 span {
-      color: #00D4AA;
+      color: #2E7D6B;
     }
 
     .sidebar-nav {
@@ -303,7 +486,7 @@
       background: transparent;
       border: none;
       border-radius: 10px;
-      color: rgba(255,255,255,0.55);
+      color: #6B7899;
       font-size: 14px;
       font-weight: 500;
       text-align: left;
@@ -312,17 +495,18 @@
     }
 
     .sidebar-nav-btn:hover {
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.9);
+      background: #F4F6FB;
+      color: #1A2340;
     }
 
     .sidebar-nav-btn.active {
-      background: rgba(0,212,170,0.12);
-      color: #00D4AA;
+      background: #EAF6F2;
+      color: #2E7D6B;
+      font-weight: 600;
     }
 
     .sidebar-nav-btn .nav-icon {
-      font-size: 18px;
+      font-size: 17px;
       width: 22px;
       text-align: center;
       flex: 0 0 auto;
@@ -330,7 +514,7 @@
 
     .sidebar-user {
       padding: 16px 22px;
-      border-top: 1px solid rgba(255,255,255,0.07);
+      border-top: 1px solid #F0F2F8;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -340,7 +524,7 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #00D4AA, #00A88B);
+      background: linear-gradient(135deg, #2E7D6B, #5BC8AC);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -357,7 +541,7 @@
     .sidebar-user-name {
       font-size: 13px;
       font-weight: 600;
-      color: #fff;
+      color: #1A2340;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -365,10 +549,33 @@
 
     .sidebar-user-email {
       font-size: 11px;
-      color: rgba(255,255,255,0.4);
+      color: #9AA3B8;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .sidebar-logout-btn {
+      margin: 0 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: calc(100% - 24px);
+      padding: 9px 14px;
+      background: transparent;
+      border: 1px solid #E8EBF2;
+      border-radius: 10px;
+      color: #9AA3B8;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 150ms, color 150ms, border-color 150ms;
+    }
+
+    .sidebar-logout-btn:hover {
+      background: #FEF2F2;
+      color: #DC2626;
+      border-color: #FECACA;
     }
 
     .page-content {
@@ -1573,7 +1780,41 @@
     </div>
   </div>
 
-  <div class="app-shell app-layout">
+  <!-- ── LOGIN PAGE ── -->
+  <div id="loginPage" class="login-page">
+    <div class="login-left">
+      <div class="login-left-brand">Universal<br><span>Dashboard</span></div>
+      <h1>Turn Data Into<br><span>Smart Decisions</span></h1>
+      <p>Upload any dataset and instantly generate AI-powered dashboards, KPIs, charts and business insights.</p>
+      <div class="login-feature-list">
+        <div class="login-feature-item"><span class="login-feature-dot"></span>AI-powered dashboard generation</div>
+        <div class="login-feature-item"><span class="login-feature-dot"></span>Smart KPI detection &amp; forecasting</div>
+        <div class="login-feature-item"><span class="login-feature-dot"></span>Excel, CSV, XML &amp; JSON support</div>
+        <div class="login-feature-item"><span class="login-feature-dot"></span>Executive-ready reports &amp; insights</div>
+      </div>
+    </div>
+    <div class="login-right">
+      <div class="login-card">
+        <div class="login-card-header">
+          <h2>Welcome back</h2>
+          <p>Sign in to your dashboard account</p>
+        </div>
+        <div id="loginError" class="login-error">Invalid email or password. Please try again.</div>
+        <div class="login-form-group">
+          <label for="loginEmail">Email address</label>
+          <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username" />
+        </div>
+        <div class="login-form-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button id="loginBtn" class="login-submit-btn" type="button">Sign In</button>
+        <div class="login-footer-note">Universal Dashboard Engine © 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainApp" class="app-shell app-layout" style="display:none">
 
     <!-- ── Sidebar ── -->
     <nav class="sidebar">
@@ -1581,35 +1822,21 @@
         <h2>Universal<br><span>Dashboard</span></h2>
       </div>
       <div class="sidebar-nav">
-        <button class="sidebar-nav-btn active" type="button">
+        <button class="sidebar-nav-btn active" type="button" id="importBtn">
           <span class="nav-icon">⊞</span> Dashboard
         </button>
         <button class="sidebar-nav-btn" type="button">
           <span class="nav-icon">📊</span> Reports
         </button>
-        <button class="sidebar-nav-btn" type="button">
-          <span class="nav-icon">✦</span> AI Insights
-        </button>
-        <button class="sidebar-nav-btn" type="button" id="importBtn">
-          <span class="nav-icon">↥</span> Uploads
-        </button>
-        <button class="sidebar-nav-btn" type="button">
-          <span class="nav-icon">📈</span> Analytics
-        </button>
-        <button class="sidebar-nav-btn" type="button">
-          <span class="nav-icon">🔭</span> Forecasts
-        </button>
-        <button class="sidebar-nav-btn" type="button" id="apiKeyBtn">
-          <span class="nav-icon">⚙</span> Settings
-        </button>
       </div>
       <div class="sidebar-user">
-        <div class="sidebar-avatar">JD</div>
+        <div class="sidebar-avatar">SR</div>
         <div class="sidebar-user-info">
-          <div class="sidebar-user-name">John Doe</div>
-          <div class="sidebar-user-email">john@company.com</div>
+          <div class="sidebar-user-name">Sri</div>
+          <div class="sidebar-user-email">sri@test.com</div>
         </div>
       </div>
+      <button class="sidebar-logout-btn" id="logoutBtn" type="button">⎋ Sign out</button>
     </nav>
 
     <!-- ── Page Content ── -->
@@ -2028,7 +2255,7 @@
     </main>
 
     </div><!-- end page-content -->
-  </div><!-- end app-shell app-layout -->
+  </div><!-- end mainApp -->
 
   <div id="toastStack" class="toast-stack" aria-live="polite"></div>
 
@@ -2096,11 +2323,48 @@
 
     document.addEventListener("DOMContentLoaded", initApp);
 
-    /**
-     * Wires page events and restores any session API key state.
-     * @returns {void}
-     */
+    const LOGIN_EMAIL = "sri@test.com";
+    const LOGIN_PASSWORD = "11111";
+
     function initApp() {
+      /* ── Login gate ── */
+      const loginPage = document.getElementById("loginPage");
+      const mainApp   = document.getElementById("mainApp");
+      const loginBtn  = document.getElementById("loginBtn");
+      const loginErr  = document.getElementById("loginError");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      function doLogin() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const pass  = document.getElementById("loginPassword").value;
+        if (email === LOGIN_EMAIL && pass === LOGIN_PASSWORD) {
+          loginPage.style.display = "none";
+          mainApp.style.display   = "flex";
+          loginErr.classList.remove("visible");
+        } else {
+          loginErr.classList.add("visible");
+          document.getElementById("loginPassword").value = "";
+          document.getElementById("loginPassword").focus();
+        }
+      }
+
+      loginBtn.addEventListener("click", doLogin);
+      document.getElementById("loginPassword").addEventListener("keydown", e => {
+        if (e.key === "Enter") doLogin();
+      });
+      document.getElementById("loginEmail").addEventListener("keydown", e => {
+        if (e.key === "Enter") document.getElementById("loginPassword").focus();
+      });
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          mainApp.style.display   = "none";
+          loginPage.style.display = "grid";
+          document.getElementById("loginEmail").value = "";
+          document.getElementById("loginPassword").value = "";
+        });
+      }
+
       updateApiKeyUI();
       els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
       els.skipKeyBtn.addEventListener("click", () => {

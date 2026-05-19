@@ -1542,42 +1542,94 @@
 
     .section-head {
       display: flex;
-      align-items: end;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin: 28px 0 14px;
+      gap: 10px;
+      margin: 28px 0 16px;
+    }
+
+    .section-head::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 20px;
+      background: #2E7D6B;
+      border-radius: 2px;
+      flex-shrink: 0;
     }
 
     .section-title {
-      font-size: 20px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
       color: #1A2340;
     }
 
     .insights-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      margin-bottom: 28px;
+      gap: 16px;
+      margin-bottom: 32px;
     }
 
     .insight-card {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 22px;
       background: #fff;
       border: 1px solid #E8EBF2;
-      border-radius: 12px;
-      border-left: 4px solid var(--accent, #2E7D6B);
-      box-shadow: 0 2px 6px rgba(26,35,64,0.04);
+      border-radius: 14px;
+      border-left: 4px solid #2E7D6B;
+      box-shadow: 0 2px 8px rgba(26,35,64,0.05);
+      transition: box-shadow 0.18s ease, transform 0.18s ease;
     }
 
-    .insight-card strong {
+    .insight-card:hover {
+      box-shadow: 0 6px 20px rgba(26,35,64,0.10);
+      transform: translateY(-2px);
+    }
+
+    .insight-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .insight-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(46,125,107,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex: 0 0 auto;
+    }
+
+    .insight-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #2E7D6B;
+    }
+
+    .insight-card-body {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #3D4A6B;
+      font-weight: 400;
+    }
+
+    .insight-card-body strong {
       color: #1A2340;
+      font-weight: 600;
     }
 
     .insight-emoji {
-      font-size: 20px;
+      display: none;
     }
 
     .table-card {
@@ -3159,18 +3211,33 @@ RULES:
      * @param {Object} spec DashboardSpec.
      * @returns {void}
      */
+    const INSIGHT_EMOJIS = ["📈","💡","🎯","📊","⚡","🔍","📉","✅","🚀","💼"];
+    const INSIGHT_LABELS = ["Trend Analysis","Key Finding","Performance","Data Insight","Highlight","Observation","Pattern Detected","Summary","Growth Signal","Business Metric"];
+
     function renderInsights(spec) {
       els.insightsGrid.replaceChildren();
       spec.insights.forEach((insight, index) => {
         const card = document.createElement("article");
         card.className = "insight-card";
-        card.style.setProperty("--accent", COLORS[index % COLORS.length]);
-        const emoji = document.createElement("span");
-        emoji.className = "insight-emoji";
-        emoji.textContent = insight.emoji || "•";
-        const text = document.createElement("div");
-        text.appendChild(sanitizeInsight(insight.text || ""));
-        card.append(emoji, text);
+
+        const header = document.createElement("div");
+        header.className = "insight-card-header";
+
+        const badge = document.createElement("span");
+        badge.className = "insight-icon-badge";
+        badge.textContent = insight.emoji || INSIGHT_EMOJIS[index % INSIGHT_EMOJIS.length];
+
+        const label = document.createElement("span");
+        label.className = "insight-label";
+        label.textContent = INSIGHT_LABELS[index % INSIGHT_LABELS.length];
+
+        header.append(badge, label);
+
+        const body = document.createElement("div");
+        body.className = "insight-card-body";
+        body.appendChild(sanitizeInsight(insight.text || ""));
+
+        card.append(header, body);
         els.insightsGrid.appendChild(card);
       });
     }

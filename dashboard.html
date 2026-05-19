@@ -249,43 +249,877 @@
       font-weight: 700;
     }
 
-    .upload-state {
-      min-height: calc(100vh - 86px);
-      display: grid;
-      place-items: center;
-      padding: 32px 18px;
+    /* ── Sidebar layout ── */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
     }
 
-    .upload-card {
-      width: min(720px, 100%);
-      padding: clamp(24px, 4vw, 42px);
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 240px;
+      background: #0F1117;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      z-index: 30;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 28px 22px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .sidebar-brand h2 {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: 20px;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .sidebar-brand h2 span {
+      color: #00D4AA;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background 150ms, color 150ms;
+    }
+
+    .sidebar-nav-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .sidebar-nav-btn.active {
+      background: rgba(0,212,170,0.12);
+      color: #00D4AA;
+    }
+
+    .sidebar-nav-btn .nav-icon {
+      font-size: 18px;
+      width: 22px;
       text-align: center;
+      flex: 0 0 auto;
     }
 
-    .upload-card h2 {
+    .sidebar-user {
+      padding: 16px 22px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00D4AA, #00A88B);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex: 0 0 auto;
+    }
+
+    .sidebar-user-info {
+      min-width: 0;
+    }
+
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-user-email {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .page-content {
+      margin-left: 240px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── Home hero ── */
+    .home-page {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home-hero {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 48px;
+      align-items: center;
+      padding: 64px 48px 56px;
+      background: linear-gradient(135deg, #0F1117 0%, #1a1d2e 50%, #0d1f2d 100%);
+      color: #fff;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(0,212,170,0.12);
+      border: 1px solid rgba(0,212,170,0.25);
+      color: #00D4AA;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .hero-headline {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.4rem, 4vw, 3.5rem);
+      line-height: 1.05;
+      color: #fff;
+    }
+
+    .hero-headline span {
+      color: #00D4AA;
+    }
+
+    .hero-subtext {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.6);
+      max-width: 34rem;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .hero-pill .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #00D4AA;
+      flex: 0 0 auto;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 26px;
+      background: linear-gradient(135deg, #00D4AA, #00A88B);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 150ms, box-shadow 150ms;
+      box-shadow: 0 8px 24px rgba(0,212,170,0.3);
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,212,170,0.4);
+    }
+
+    .cta-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 22px;
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      font-weight: 600;
+      font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 150ms, border-color 150ms;
+    }
+
+    .cta-ghost:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.35);
+      color: #fff;
+    }
+
+    /* Hero right — preview card */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hero-preview-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 24px 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    .preview-card-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 10px;
+    }
+
+    .preview-card-value {
+      font-family: "Playfair Display", serif;
+      font-size: 2.6rem;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .preview-card-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 5px 12px;
+      background: rgba(0,212,170,0.15);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #00D4AA;
+    }
+
+    .preview-card-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      margin-left: 6px;
+    }
+
+    .preview-insight-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .insight-icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00D4AA22, #00D4AA44);
+      border: 1px solid rgba(0,212,170,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+
+    .insight-text-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #00D4AA;
+      margin-bottom: 4px;
+    }
+
+    .insight-text-body {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+    }
+
+    .preview-mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .mini-stat-value {
+      font-family: "Playfair Display", serif;
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    /* ── Upload section ── */
+    .home-upload-section {
+      padding: 56px 48px;
+      background: var(--bg);
+    }
+
+    .home-section-head {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .home-section-head h2 {
       margin: 0 0 10px;
       font-family: "Playfair Display", serif;
-      font-size: clamp(34px, 6vw, 54px);
-      line-height: 1.03;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      color: var(--text-primary);
+    }
+
+    .home-section-head p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .upload-drop-area {
+      max-width: 700px;
+      margin: 0 auto 28px;
     }
 
     .drop-zone {
-      margin-top: 28px;
-      padding: clamp(28px, 6vw, 56px);
-      background: var(--surface2);
-      border: 2px dashed var(--text-muted);
+      padding: clamp(32px, 5vw, 56px);
+      background: var(--surface);
+      border: 2px dashed var(--border);
       border-radius: var(--radius);
-      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+      text-align: center;
+      cursor: pointer;
+      transition: background 150ms, border-color 150ms, transform 150ms;
     }
 
+    .drop-zone:hover,
     .drop-zone.drag-over {
-      background: var(--surface);
-      border-color: var(--caramel);
+      background: #f0fdf9;
+      border-color: #00D4AA;
       transform: translateY(-2px);
     }
 
     .drop-icon {
       font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .drop-zone p {
+      margin: 6px 0;
+      color: var(--text-secondary);
+    }
+
+    .drop-zone p strong {
+      color: var(--text-primary);
+    }
+
+    .drop-zone .file-size-note {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .file-type-badges {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .file-type-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      min-width: 80px;
+    }
+
+    .file-type-badge .ft-icon {
+      font-size: 22px;
+    }
+
+    .file-type-badge .ft-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .file-type-badge .ft-ext {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ── Live Analytics preview section ── */
+    .home-analytics-section {
+      padding: 56px 48px;
+      background: var(--surface2);
+    }
+
+    .home-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin: 28px 0;
+    }
+
+    .home-kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      border-top: 3px solid #00D4AA;
+    }
+
+    .home-kpi-icon-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .home-kpi-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(0,212,170,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .home-kpi-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .home-kpi-trend.up {
+      background: rgba(122, 140, 92, 0.12);
+      color: var(--olive);
+    }
+
+    .home-kpi-trend.down {
+      background: rgba(232,112,64,0.12);
+      color: var(--orange);
+    }
+
+    .home-kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .home-kpi-value {
+      font-family: "Playfair Display", serif;
+      font-size: 2rem;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .home-kpi-period {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── AI Insights section ── */
+    .home-insights-section {
+      padding: 56px 48px;
+      background: var(--bg);
+    }
+
+    .home-insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .home-insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hi-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hi-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex: 0 0 auto;
+    }
+
+    .hi-confidence {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .hi-card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .hi-card-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .hi-card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #00A88B;
+      background: rgba(0,212,170,0.08);
+      padding: 5px 12px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .home-insights-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 36px;
+      padding: 28px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .his-stat {
+      text-align: center;
+    }
+
+    .his-stat-value {
+      font-family: "Playfair Display", serif;
+      font-size: 2rem;
+      color: var(--text-primary);
+    }
+
+    .his-stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── Gallery section ── */
+    .home-gallery-section {
+      padding: 56px 48px;
+      background: var(--surface2);
+    }
+
+    .home-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .gallery-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 150ms, box-shadow 150ms;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gallery-thumb {
+      position: relative;
+      height: 160px;
+      background: linear-gradient(135deg, var(--surface2), var(--border));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .gallery-thumb-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 80px;
+      padding: 0 20px;
+    }
+
+    .gt-bar {
+      width: 22px;
+      border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, #00D4AA, rgba(0,212,170,0.3));
+    }
+
+    .gallery-thumb-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0,212,170,0.15);
+      color: #00A88B;
+      border: 1px solid rgba(0,212,170,0.25);
+    }
+
+    .gallery-thumb-btn {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #0F1117;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 150ms;
+    }
+
+    .gallery-card:hover .gallery-thumb-btn {
+      opacity: 1;
+    }
+
+    .gallery-card-body {
+      padding: 18px 20px;
+    }
+
+    .gallery-card-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .gallery-card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 0 0 12px;
+    }
+
+    .gallery-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gallery-card-metric {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--olive);
+    }
+
+    .gallery-card-insights {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* ── Footer ── */
+    .home-footer {
+      background: #0F1117;
+      color: rgba(255,255,255,0.5);
+      padding: 48px;
+    }
+
+    .home-footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 40px;
+      margin-bottom: 32px;
+    }
+
+    .footer-brand h3 {
+      margin: 0 0 10px;
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .footer-col h4 {
+      margin: 0 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-col ul li {
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 150ms;
+    }
+
+    .footer-col ul li:hover {
+      color: rgba(255,255,255,0.9);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 22px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .sidebar { width: 200px; }
+      .page-content { margin-left: 200px; }
+      .home-hero { grid-template-columns: 1fr; padding: 40px 28px; }
+      .hero-right { display: none; }
+      .home-upload-section,
+      .home-analytics-section,
+      .home-insights-section,
+      .home-gallery-section,
+      .home-footer { padding: 40px 28px; }
+      .home-footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .page-content { margin-left: 0; }
     }
 
     .filters-bar {
@@ -739,35 +1573,426 @@
     </div>
   </div>
 
-  <div class="app-shell">
-    <header class="top-header">
-      <div class="brand">
-        <div class="brand-line">
-          <span id="domainIcon" class="domain-icon">◈</span>
-          <h1 id="dashboardTitle" class="title">Universal Dashboard Engine</h1>
-        </div>
-        <p id="dashboardSubtitle" class="subtitle">Upload any dataset. Claude builds your dashboard instantly.</p>
-      </div>
-      <div class="header-actions">
-        <button id="apiKeyBtn" class="ghost-btn" type="button">Use Claude API</button>
-        <div id="keyChip" class="key-chip hidden"><span>Key saved •••••</span><button id="changeKeyBtn" class="text-btn" type="button">Change</button></div>
-        <button id="importBtn" class="primary-btn" type="button">Import Dataset</button>
-        <button id="exportHtmlBtn" class="ghost-btn hidden" type="button">Download HTML</button>
-        <button id="exportPdfBtn" class="ghost-btn hidden" type="button">Download PDF</button>
-      </div>
-    </header>
+  <div class="app-shell app-layout">
 
-    <section id="uploadState" class="upload-state">
-      <div class="upload-card">
-        <h2>Upload any dataset.</h2>
-        <p>Claude builds your dashboard instantly.</p>
-        <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload CSV or Excel dataset">
-          <div class="drop-icon">↥</div>
-          <p><strong>Drop a CSV or XLSX file here</strong></p>
-          <p>or click to browse</p>
+    <!-- ── Sidebar ── -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <h2>Universal<br><span>Dashboard</span></h2>
+      </div>
+      <div class="sidebar-nav">
+        <button class="sidebar-nav-btn active" type="button">
+          <span class="nav-icon">⊞</span> Dashboard
+        </button>
+        <button class="sidebar-nav-btn" type="button">
+          <span class="nav-icon">📊</span> Reports
+        </button>
+        <button class="sidebar-nav-btn" type="button">
+          <span class="nav-icon">✦</span> AI Insights
+        </button>
+        <button class="sidebar-nav-btn" type="button" id="importBtn">
+          <span class="nav-icon">↥</span> Uploads
+        </button>
+        <button class="sidebar-nav-btn" type="button">
+          <span class="nav-icon">📈</span> Analytics
+        </button>
+        <button class="sidebar-nav-btn" type="button">
+          <span class="nav-icon">🔭</span> Forecasts
+        </button>
+        <button class="sidebar-nav-btn" type="button" id="apiKeyBtn">
+          <span class="nav-icon">⚙</span> Settings
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">JD</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">John Doe</div>
+          <div class="sidebar-user-email">john@company.com</div>
         </div>
       </div>
+    </nav>
+
+    <!-- ── Page Content ── -->
+    <div class="page-content">
+
+      <!-- Hidden header for dashboard state (keeps existing JS references) -->
+      <header class="top-header hidden" id="dashboardHeader">
+        <div class="brand">
+          <div class="brand-line">
+            <span id="domainIcon" class="domain-icon">◈</span>
+            <h1 id="dashboardTitle" class="title">Universal Dashboard Engine</h1>
+          </div>
+          <p id="dashboardSubtitle" class="subtitle">Upload any dataset. Claude builds your dashboard instantly.</p>
+        </div>
+        <div class="header-actions">
+          <div id="keyChip" class="key-chip hidden"><span>Key saved •••••</span><button id="changeKeyBtn" class="text-btn" type="button">Change</button></div>
+          <button id="exportHtmlBtn" class="ghost-btn hidden" type="button">Download HTML</button>
+          <button id="exportPdfBtn" class="ghost-btn hidden" type="button">Download PDF</button>
+        </div>
+      </header>
+
+    <!-- ── HOME PAGE ── -->
+    <section id="uploadState" class="home-page">
+
+      <!-- Hero -->
+      <div class="home-hero">
+        <div class="hero-left">
+          <span class="hero-eyebrow">✦ AI-Powered Analytics Platform</span>
+          <h1 class="hero-headline">Transform Raw Data Into<br><span>Executive Intelligence</span></h1>
+          <p class="hero-subtext">Upload Excel, XML, CSV or Business Data and instantly generate AI-powered dashboards, KPIs, charts, reports and insights.</p>
+          <div class="hero-pills">
+            <span class="hero-pill"><span class="pill-dot"></span>AI Analytics</span>
+            <span class="hero-pill"><span class="pill-dot"></span>Smart KPI Detection</span>
+            <span class="hero-pill"><span class="pill-dot"></span>Executive Dashboards</span>
+            <span class="hero-pill"><span class="pill-dot"></span>Real-time Insights</span>
+            <span class="hero-pill"><span class="pill-dot"></span>Forecasting</span>
+            <span class="hero-pill"><span class="pill-dot"></span>Business Reports</span>
+          </div>
+          <div class="hero-cta-row">
+            <button class="cta-primary" id="heroUploadBtn" type="button">↥ Upload Files</button>
+            <button class="cta-ghost" type="button">▶ Watch Demo</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-preview-card">
+            <div class="preview-card-label">Revenue</div>
+            <div class="preview-card-value">$2.4M</div>
+            <div>
+              <span class="preview-card-trend">↑ +24%</span>
+              <span class="preview-card-sub">vs last quarter</span>
+            </div>
+          </div>
+          <div class="preview-insight-card">
+            <div class="insight-icon-circle">✦</div>
+            <div>
+              <div class="insight-text-label">AI Insight · Growth Detected</div>
+              <div class="insight-text-body">Revenue increased 24% this quarter. Strong performance in Q2.</div>
+            </div>
+          </div>
+          <div class="preview-mini-stats">
+            <div class="mini-stat">
+              <div class="mini-stat-label">Active Users</div>
+              <div class="mini-stat-value">12,845</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-label">Conversion</div>
+              <div class="mini-stat-value">3.2%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Section -->
+      <div class="home-upload-section">
+        <div class="home-section-head">
+          <h2>Upload Your Business Data</h2>
+          <p>Drag and drop your files or click to browse. We support Excel, CSV, XML, JSON and more.</p>
+        </div>
+        <div class="upload-drop-area">
+          <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload CSV or Excel dataset">
+            <div class="drop-icon">↥</div>
+            <p><strong>Drop files here or click to browse</strong></p>
+            <p class="file-size-note">Maximum file size: 50MB — .csv and .xlsx supported</p>
+          </div>
+        </div>
+        <div class="file-type-badges">
+          <div class="file-type-badge">
+            <span class="ft-icon">📗</span>
+            <span class="ft-name">Excel</span>
+            <span class="ft-ext">.xlsx</span>
+          </div>
+          <div class="file-type-badge">
+            <span class="ft-icon">📄</span>
+            <span class="ft-name">CSV</span>
+            <span class="ft-ext">.csv</span>
+          </div>
+          <div class="file-type-badge">
+            <span class="ft-icon">🗂</span>
+            <span class="ft-name">XML</span>
+            <span class="ft-ext">.xml</span>
+          </div>
+          <div class="file-type-badge">
+            <span class="ft-icon">{ }</span>
+            <span class="ft-name">JSON</span>
+            <span class="ft-ext">.json</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Analytics Section -->
+      <div class="home-analytics-section">
+        <div class="home-section-head">
+          <h2>Live Analytics Dashboard</h2>
+          <p>Real-time insights and KPIs from your business data</p>
+        </div>
+        <div class="home-kpi-grid">
+          <div class="home-kpi-card">
+            <div class="home-kpi-icon-row">
+              <div class="home-kpi-icon">💰</div>
+              <span class="home-kpi-trend up">↑ +24%</span>
+            </div>
+            <div class="home-kpi-label">Total Revenue</div>
+            <div class="home-kpi-value">$2.4M</div>
+            <div class="home-kpi-period">vs last period</div>
+          </div>
+          <div class="home-kpi-card">
+            <div class="home-kpi-icon-row">
+              <div class="home-kpi-icon">👥</div>
+              <span class="home-kpi-trend up">↑ +12%</span>
+            </div>
+            <div class="home-kpi-label">Active Users</div>
+            <div class="home-kpi-value">12,845</div>
+            <div class="home-kpi-period">vs last period</div>
+          </div>
+          <div class="home-kpi-card">
+            <div class="home-kpi-icon-row">
+              <div class="home-kpi-icon">🎯</div>
+              <span class="home-kpi-trend down">↓ −2%</span>
+            </div>
+            <div class="home-kpi-label">Conversion Rate</div>
+            <div class="home-kpi-value">3.2%</div>
+            <div class="home-kpi-period">vs last period</div>
+          </div>
+          <div class="home-kpi-card">
+            <div class="home-kpi-icon-row">
+              <div class="home-kpi-icon">⏱</div>
+              <span class="home-kpi-trend up">↑ +8%</span>
+            </div>
+            <div class="home-kpi-label">Avg. Session</div>
+            <div class="home-kpi-value">4m 32s</div>
+            <div class="home-kpi-period">vs last period</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Insights Section -->
+      <div class="home-insights-section">
+        <div class="home-section-head">
+          <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);border-radius:999px;font-size:12px;font-weight:700;color:#00A88B;margin-bottom:14px;">✦ AI-Powered Intelligence</div>
+          <h2>Smart Business Insights</h2>
+          <p>AI automatically detects patterns, anomalies, and opportunities in your data</p>
+        </div>
+        <div class="home-insights-grid">
+          <div class="home-insight-card">
+            <div class="hi-card-top">
+              <div class="hi-card-icon" style="background:rgba(122,140,92,0.1);">📈</div>
+              <span class="hi-confidence">94% confidence</span>
+            </div>
+            <h3 class="hi-card-title">Revenue Growth Detected</h3>
+            <p class="hi-card-body">Revenue increased 24% this quarter compared to last period.</p>
+            <span class="hi-card-tag">✓ AI Analysis Complete</span>
+          </div>
+          <div class="home-insight-card">
+            <div class="hi-card-top">
+              <div class="hi-card-icon" style="background:rgba(232,112,64,0.1);">⚠️</div>
+              <span class="hi-confidence">87% confidence</span>
+            </div>
+            <h3 class="hi-card-title">Churn Risk Alert</h3>
+            <p class="hi-card-body">Customer churn risk detected in enterprise segment. Immediate action recommended.</p>
+            <span class="hi-card-tag">✓ AI Analysis Complete</span>
+          </div>
+          <div class="home-insight-card">
+            <div class="hi-card-top">
+              <div class="hi-card-icon" style="background:rgba(196,138,63,0.1);">🔍</div>
+              <span class="hi-confidence">78% confidence</span>
+            </div>
+            <h3 class="hi-card-title">Inventory Anomaly</h3>
+            <p class="hi-card-body">Unusual inventory pattern identified in Q2 data. Review suggested.</p>
+            <span class="hi-card-tag">✓ AI Analysis Complete</span>
+          </div>
+          <div class="home-insight-card">
+            <div class="hi-card-top">
+              <div class="hi-card-icon" style="background:rgba(0,212,170,0.1);">🔭</div>
+              <span class="hi-confidence">91% confidence</span>
+            </div>
+            <h3 class="hi-card-title">Sales Forecast</h3>
+            <p class="hi-card-body">AI models predict 18% growth in next quarter based on current trends.</p>
+            <span class="hi-card-tag">✓ AI Analysis Complete</span>
+          </div>
+        </div>
+        <div class="home-insights-stats">
+          <div class="his-stat">
+            <div class="his-stat-value">24</div>
+            <div class="his-stat-label">Data Fields Detected</div>
+          </div>
+          <div class="his-stat">
+            <div class="his-stat-value">12</div>
+            <div class="his-stat-label">Key Metrics Identified</div>
+          </div>
+          <div class="his-stat">
+            <div class="his-stat-value">92%</div>
+            <div class="his-stat-label">Average AI Confidence</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Gallery -->
+      <div class="home-gallery-section">
+        <div class="home-section-head">
+          <h2>Dashboard Gallery</h2>
+          <p>Explore sample dashboards and reports generated by our AI</p>
+        </div>
+        <div class="home-gallery-grid">
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:80%"></div>
+                <div class="gt-bar" style="height:55%"></div>
+                <div class="gt-bar" style="height:70%"></div>
+                <div class="gt-bar" style="height:45%"></div>
+                <div class="gt-bar" style="height:90%"></div>
+              </div>
+              <span class="gallery-thumb-tag">Revenue Analytics</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Executive Summary Q2 2025</div>
+              <div class="gallery-card-desc">Comprehensive quarterly business performance</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +15%</span>
+                <span class="gallery-card-insights">59 insights</span>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:60%"></div>
+                <div class="gt-bar" style="height:85%"></div>
+                <div class="gt-bar" style="height:40%"></div>
+                <div class="gt-bar" style="height:65%"></div>
+                <div class="gt-bar" style="height:50%"></div>
+              </div>
+              <span class="gallery-thumb-tag">User Analytics</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Customer Insights Dashboard</div>
+              <div class="gallery-card-desc">User behavior and engagement metrics</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +23%</span>
+                <span class="gallery-card-insights">11 insights</span>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:75%"></div>
+                <div class="gt-bar" style="height:50%"></div>
+                <div class="gt-bar" style="height:90%"></div>
+                <div class="gt-bar" style="height:60%"></div>
+                <div class="gt-bar" style="height:35%"></div>
+              </div>
+              <span class="gallery-thumb-tag">Sales Intelligence</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Sales Performance Report</div>
+              <div class="gallery-card-desc">Regional sales analysis and forecasting</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +19%</span>
+                <span class="gallery-card-insights">16 insights</span>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:45%"></div>
+                <div class="gt-bar" style="height:70%"></div>
+                <div class="gt-bar" style="height:55%"></div>
+                <div class="gt-bar" style="height:80%"></div>
+                <div class="gt-bar" style="height:65%"></div>
+              </div>
+              <span class="gallery-thumb-tag">Financial Reports</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Financial Overview</div>
+              <div class="gallery-card-desc">Real-time financial metrics and KPIs</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +20%</span>
+                <span class="gallery-card-insights">19 insights</span>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:88%"></div>
+                <div class="gt-bar" style="height:42%"></div>
+                <div class="gt-bar" style="height:67%"></div>
+                <div class="gt-bar" style="height:78%"></div>
+                <div class="gt-bar" style="height:53%"></div>
+              </div>
+              <span class="gallery-thumb-tag">Marketing Intelligence</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Marketing Analytics</div>
+              <div class="gallery-card-desc">Campaign performance and ROI analysis</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +25%</span>
+                <span class="gallery-card-insights">28 insights</span>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-card">
+            <div class="gallery-thumb">
+              <div class="gallery-thumb-bars">
+                <div class="gt-bar" style="height:52%"></div>
+                <div class="gt-bar" style="height:76%"></div>
+                <div class="gt-bar" style="height:48%"></div>
+                <div class="gt-bar" style="height:85%"></div>
+                <div class="gt-bar" style="height:61%"></div>
+              </div>
+              <span class="gallery-thumb-tag">Operations Analytics</span>
+              <button class="gallery-thumb-btn" type="button">▶ View Dashboard</button>
+            </div>
+            <div class="gallery-card-body">
+              <div class="gallery-card-title">Operations Dashboard</div>
+              <div class="gallery-card-desc">Operational efficiency and process metrics</div>
+              <div class="gallery-card-footer">
+                <span class="gallery-card-metric">↑ +26%</span>
+                <span class="gallery-card-insights">11 insights</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="home-footer">
+        <div class="home-footer-grid">
+          <div class="footer-brand">
+            <h3>Universal Dashboard Engine</h3>
+            <p>Transform raw data into executive intelligence with AI-powered analytics.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li>Features</li><li>Pricing</li><li>Security</li><li>Enterprise</li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <ul>
+              <li>Documentation</li><li>API Reference</li><li>Support</li><li>Blog</li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li>About</li><li>Careers</li><li>Privacy</li><li>Terms</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">© 2025 Universal Dashboard Engine. All rights reserved.</div>
+      </footer>
+
     </section>
+    <!-- END HOME PAGE -->
 
     <section id="filtersBar" class="filters-bar hidden">
       <div id="filtersWrap" class="filters-wrap"></div>
@@ -801,7 +2026,9 @@
         </div>
       </section>
     </main>
-  </div>
+
+    </div><!-- end page-content -->
+  </div><!-- end app-shell app-layout -->
 
   <div id="toastStack" class="toast-stack" aria-live="polite"></div>
 
@@ -825,6 +2052,7 @@
       keyChip: document.getElementById("keyChip"),
       fileInput: document.getElementById("fileInput"),
       importBtn: document.getElementById("importBtn"),
+      heroUploadBtn: document.getElementById("heroUploadBtn"),
       exportHtmlBtn: document.getElementById("exportHtmlBtn"),
       exportPdfBtn: document.getElementById("exportPdfBtn"),
       uploadState: document.getElementById("uploadState"),
@@ -890,6 +2118,7 @@
         els.apiKeyInput.focus();
       });
       els.importBtn.addEventListener("click", () => els.fileInput.click());
+      if (els.heroUploadBtn) els.heroUploadBtn.addEventListener("click", () => els.fileInput.click());
       els.fileInput.addEventListener("change", event => {
         const file = event.target.files[0];
         if (file) handleFile(file);
@@ -971,6 +2200,7 @@
         populateFilters(spec, RAW_DATA);
         renderAll(spec, FILTERED_DATA);
         els.uploadState.classList.add("hidden");
+        document.getElementById("dashboardHeader").classList.remove("hidden");
         els.dashboardMain.classList.remove("hidden");
         els.filtersBar.classList.remove("hidden");
         els.exportHtmlBtn.classList.remove("hidden");

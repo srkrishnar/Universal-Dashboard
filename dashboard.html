@@ -2316,28 +2316,6 @@
       const loginErr  = document.getElementById("loginError");
       const logoutBtn = document.getElementById("logoutBtn");
 
-      function doLogin() {
-        const email = document.getElementById("loginEmail").value.trim();
-        const pass  = document.getElementById("loginPassword").value;
-        if (email === LOGIN_EMAIL && pass === LOGIN_PASSWORD) {
-          loginPage.style.display = "none";
-          mainApp.style.display   = "flex";
-          loginErr.classList.remove("visible");
-        } else {
-          loginErr.classList.add("visible");
-          document.getElementById("loginPassword").value = "";
-          document.getElementById("loginPassword").focus();
-        }
-      }
-
-      loginBtn.addEventListener("click", doLogin);
-      document.getElementById("loginPassword").addEventListener("keydown", e => {
-        if (e.key === "Enter") doLogin();
-      });
-      document.getElementById("loginEmail").addEventListener("keydown", e => {
-        if (e.key === "Enter") document.getElementById("loginPassword").focus();
-      });
-
       if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
           mainApp.style.display   = "none";
@@ -2347,48 +2325,71 @@
         });
       }
 
-      updateApiKeyUI();
-      els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
-      els.skipKeyBtn.addEventListener("click", () => {
-        els.apiModal.classList.add("hidden");
-        showToast("Using local dashboard generator", "info");
-      });
-      els.apiKeyBtn.addEventListener("click", () => {
-        els.apiModal.classList.remove("hidden");
-        els.apiKeyInput.focus();
-      });
-      els.changeKeyBtn.addEventListener("click", () => {
-        sessionStorage.removeItem("ANTHROPIC_KEY");
+      /* Wire all app listeners once after login shows mainApp */
+      function wireAppListeners() {
         updateApiKeyUI();
-        els.apiModal.classList.remove("hidden");
-        els.apiKeyInput.focus();
+        els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
+        els.skipKeyBtn.addEventListener("click", () => {
+          els.apiModal.classList.add("hidden");
+          showToast("Using local dashboard generator", "info");
+        });
+        if (els.changeKeyBtn) els.changeKeyBtn.addEventListener("click", () => {
+          sessionStorage.removeItem("ANTHROPIC_KEY");
+          updateApiKeyUI();
+          els.apiModal.classList.remove("hidden");
+          els.apiKeyInput.focus();
+        });
+        if (els.apiKeyBtn) els.apiKeyBtn.addEventListener("click", () => { els.apiModal.classList.remove("hidden"); els.apiKeyInput.focus(); });
+        if (els.heroUploadBtn) els.heroUploadBtn.addEventListener("click", () => els.fileInput.click());
+        els.fileInput.addEventListener("change", event => {
+          const file = event.target.files[0];
+          if (file) handleFile(file);
+          event.target.value = "";
+        });
+        els.exportHtmlBtn.addEventListener("click", exportHTML);
+        els.exportPdfBtn.addEventListener("click", exportPDF);
+        els.customFilterColumn.addEventListener("change", updateCustomFilterValues);
+        els.customFilterValue.addEventListener("change", applyFilters);
+        els.resetFiltersBtn.addEventListener("click", resetFilters);
+        els.dropZone.addEventListener("click", () => els.fileInput.click());
+        els.dropZone.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") els.fileInput.click();
+        });
+        ["dragenter", "dragover"].forEach(type => els.dropZone.addEventListener(type, event => {
+          event.preventDefault();
+          els.dropZone.classList.add("drag-over");
+        }));
+        ["dragleave", "drop"].forEach(type => els.dropZone.addEventListener(type, event => {
+          event.preventDefault();
+          els.dropZone.classList.remove("drag-over");
+        }));
+        els.dropZone.addEventListener("drop", event => {
+          const file = event.dataTransfer.files[0];
+          if (file) handleFile(file);
+        });
+      }
+
+      let _appWired = false;
+      function doLoginAndWire() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const pass  = document.getElementById("loginPassword").value;
+        if (email === LOGIN_EMAIL && pass === LOGIN_PASSWORD) {
+          loginPage.style.display = "none";
+          mainApp.style.display   = "flex";
+          loginErr.classList.remove("visible");
+          if (!_appWired) { wireAppListeners(); _appWired = true; }
+        } else {
+          loginErr.classList.add("visible");
+          document.getElementById("loginPassword").value = "";
+          document.getElementById("loginPassword").focus();
+        }
+      }
+      loginBtn.addEventListener("click", doLoginAndWire);
+      document.getElementById("loginPassword").addEventListener("keydown", e => {
+        if (e.key === "Enter") doLoginAndWire();
       });
-      if (els.heroUploadBtn) els.heroUploadBtn.addEventListener("click", () => els.fileInput.click());
-      els.fileInput.addEventListener("change", event => {
-        const file = event.target.files[0];
-        if (file) handleFile(file);
-        event.target.value = "";
-      });
-      els.exportHtmlBtn.addEventListener("click", exportHTML);
-      els.exportPdfBtn.addEventListener("click", exportPDF);
-      els.customFilterColumn.addEventListener("change", updateCustomFilterValues);
-      els.customFilterValue.addEventListener("change", applyFilters);
-      els.resetFiltersBtn.addEventListener("click", resetFilters);
-      els.dropZone.addEventListener("click", () => els.fileInput.click());
-      els.dropZone.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") els.fileInput.click();
-      });
-      ["dragenter", "dragover"].forEach(type => els.dropZone.addEventListener(type, event => {
-        event.preventDefault();
-        els.dropZone.classList.add("drag-over");
-      }));
-      ["dragleave", "drop"].forEach(type => els.dropZone.addEventListener(type, event => {
-        event.preventDefault();
-        els.dropZone.classList.remove("drag-over");
-      }));
-      els.dropZone.addEventListener("drop", event => {
-        const file = event.dataTransfer.files[0];
-        if (file) handleFile(file);
+      document.getElementById("loginEmail").addEventListener("keydown", e => {
+        if (e.key === "Enter") document.getElementById("loginPassword").focus();
       });
     }
 
@@ -2414,8 +2415,8 @@
      * @returns {void}
      */
     function updateApiKeyUI() {
-      els.keyChip.classList.toggle("hidden", !getApiKey());
-      els.apiKeyBtn.classList.toggle("hidden", Boolean(getApiKey()));
+      if (els.keyChip) els.keyChip.classList.toggle("hidden", !getApiKey());
+      if (els.apiKeyBtn) els.apiKeyBtn.classList.toggle("hidden", Boolean(getApiKey()));
     }
 
     /**

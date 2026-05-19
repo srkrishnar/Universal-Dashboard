@@ -151,29 +151,29 @@
 
     .primary-btn {
       padding: 0 18px;
-      color: var(--surface);
-      background: linear-gradient(135deg, var(--caramel), var(--orange));
-      box-shadow: var(--shadow);
+      color: #fff;
+      background: linear-gradient(135deg, #243060, #2E7D6B);
+      box-shadow: 0 2px 8px rgba(36,48,96,0.18);
     }
 
     .ghost-btn {
       padding: 0 16px;
-      color: var(--brown);
-      background: var(--surface);
-      border-color: var(--border);
+      color: #3D4A63;
+      background: #fff;
+      border-color: #E2E6F0;
     }
 
     .text-btn {
       min-height: auto;
       padding: 0;
-      color: var(--brown);
+      color: #3D4A63;
       background: transparent;
     }
 
     .primary-btn:hover,
     .ghost-btn:hover {
       transform: translateY(-1px);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 4px 14px rgba(36,48,96,0.14);
     }
 
     .top-header {
@@ -184,9 +184,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      padding: 18px clamp(18px, 4vw, 44px);
-      background: rgba(250, 247, 242, 0.92);
-      border-bottom: 1px solid var(--border);
+      padding: 16px clamp(18px, 4vw, 44px);
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1px solid #E8EBF2;
       backdrop-filter: blur(16px);
     }
 
@@ -219,12 +219,14 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       font-family: "Playfair Display", serif;
-      font-size: clamp(24px, 3vw, 34px);
+      font-size: clamp(18px, 2.2vw, 24px);
+      color: #1A2340;
     }
 
     .subtitle {
-      margin: 4px 0 0 52px;
-      font-size: 14px;
+      margin: 3px 0 0 52px;
+      font-size: 13px;
+      color: #6B7899;
     }
 
     .header-actions {
@@ -1315,14 +1317,14 @@
 
     .filters-bar {
       position: sticky;
-      top: 79px;
+      top: 65px;
       z-index: 15;
       display: flex;
       gap: 12px;
       align-items: end;
-      padding: 14px clamp(18px, 4vw, 44px);
-      background: rgba(245, 240, 232, 0.94);
-      border-bottom: 1px solid var(--border);
+      padding: 12px clamp(18px, 4vw, 44px);
+      background: rgba(248,249,252,0.97);
+      border-bottom: 1px solid #E8EBF2;
       backdrop-filter: blur(16px);
     }
 
@@ -1356,14 +1358,20 @@
     }
 
     select {
-      min-height: 40px;
-      padding: 0 36px 0 12px;
-      color: var(--text-primary);
+      min-height: 38px;
+      padding: 0 32px 0 12px;
+      color: #1A2340;
       appearance: none;
-      background: var(--surface) linear-gradient(45deg, transparent 50%, var(--brown) 50%) right 16px center / 7px 7px no-repeat;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      background: #fff linear-gradient(45deg, transparent 50%, #6B7899 50%) right 14px center / 6px 6px no-repeat;
+      border: 1.5px solid #E2E6F0;
+      border-radius: 8px;
       outline: none;
+      font-size: 13px;
+    }
+
+    select:focus {
+      border-color: #2E7D6B;
+      box-shadow: 0 0 0 3px rgba(46,125,107,0.12);
     }
 
     .dashboard-main {
@@ -1380,9 +1388,13 @@
     .kpi-card {
       position: relative;
       overflow: hidden;
-      min-height: 154px;
+      min-height: 140px;
       padding: 18px;
-      border-top: 3px solid var(--accent, var(--caramel));
+      background: #fff;
+      border: 1px solid #E8EBF2;
+      border-top: 3px solid var(--accent, #2E7D6B);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(26,35,64,0.05);
       animation: fadeUp 420ms ease both;
       transition: transform 160ms ease, box-shadow 160ms ease;
     }
@@ -1411,17 +1423,19 @@
 
     .kpi-label {
       margin: 0;
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 800;
+      color: #6B7899;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     .kpi-value {
-      margin-top: 18px;
+      margin-top: 14px;
       font-family: "Playfair Display", serif;
-      font-size: clamp(32px, 4vw, 42px);
+      font-size: clamp(26px, 3vw, 34px);
       line-height: 1;
+      color: #1A2340;
     }
 
     .badge,
@@ -1488,12 +1502,17 @@
     }
 
     .chart-card {
-      min-height: 390px;
-      padding: 18px;
+      min-height: 370px;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #E8EBF2;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(26,35,64,0.05);
     }
 
     .chart-card h3 {
-      font-size: 22px;
+      font-size: 17px;
+      color: #1A2340;
     }
 
     .chart-head {
@@ -1504,20 +1523,21 @@
     }
 
     .chart-card p {
-      margin: 5px 0 0;
-      font-size: 13px;
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: #6B7899;
     }
 
     .chart-tag {
-      color: var(--brown);
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      color: #2E7D6B;
+      background: rgba(46,125,107,0.08);
+      border: 1px solid rgba(46,125,107,0.18);
       flex: 0 0 auto;
     }
 
     .chart-box {
       position: relative;
-      height: 300px;
+      height: 280px;
     }
 
     .section-head {
@@ -1525,11 +1545,12 @@
       align-items: end;
       justify-content: space-between;
       gap: 16px;
-      margin: 32px 0 16px;
+      margin: 28px 0 14px;
     }
 
     .section-title {
-      font-size: 28px;
+      font-size: 20px;
+      color: #1A2340;
     }
 
     .insights-grid {
@@ -1544,55 +1565,66 @@
       grid-template-columns: auto 1fr;
       gap: 12px;
       padding: 16px;
-      border-left: 4px solid var(--accent, var(--caramel));
+      background: #fff;
+      border: 1px solid #E8EBF2;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent, #2E7D6B);
+      box-shadow: 0 2px 6px rgba(26,35,64,0.04);
     }
 
     .insight-card strong {
-      color: var(--brown);
+      color: #1A2340;
     }
 
     .insight-emoji {
-      font-size: 22px;
+      font-size: 20px;
     }
 
     .table-card {
       overflow: hidden;
+      background: #fff;
+      border: 1px solid #E8EBF2;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(26,35,64,0.05);
     }
 
     .table-card h3 {
-      padding: 18px 18px 0;
-      font-size: 24px;
+      padding: 18px 20px 0;
+      font-size: 17px;
+      color: #1A2340;
     }
 
     .table-wrap {
       overflow-x: auto;
-      padding: 18px;
+      padding: 16px 20px;
     }
 
     table {
       width: 100%;
       min-width: 760px;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     th,
     td {
-      padding: 13px 12px;
+      padding: 11px 12px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #F0F2F8;
     }
 
     th {
-      color: var(--text-secondary);
-      background: var(--surface2);
-      font-size: 12px;
+      color: #6B7899;
+      background: #F8F9FC;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
       white-space: nowrap;
     }
 
     td {
-      color: var(--text-primary);
+      color: #1A2340;
     }
 
     .loading-overlay {
@@ -1601,7 +1633,7 @@
       z-index: 40;
       display: grid;
       place-items: center;
-      background: rgba(250, 247, 242, 0.78);
+      background: rgba(248,249,252,0.85);
       backdrop-filter: blur(8px);
     }
 
@@ -1609,20 +1641,21 @@
       display: grid;
       place-items: center;
       gap: 16px;
-      padding: 28px;
-      color: var(--brown);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      font-weight: 800;
+      padding: 28px 36px;
+      color: #1A2340;
+      background: #fff;
+      border: 1px solid #E8EBF2;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(26,35,64,0.1);
+      font-weight: 700;
+      font-size: 14px;
     }
 
     .spinner {
-      width: 44px;
-      height: 44px;
-      border: 4px solid var(--border);
-      border-top-color: var(--caramel);
+      width: 40px;
+      height: 40px;
+      border: 3px solid #E8EBF2;
+      border-top-color: #2E7D6B;
       border-radius: 50%;
       animation: spin 900ms linear infinite;
     }
@@ -1638,25 +1671,18 @@
     }
 
     .toast {
-      padding: 14px 16px;
-      color: var(--surface);
-      background: var(--brown);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow-lg);
-      font-weight: 700;
+      padding: 13px 16px;
+      color: #fff;
+      background: #1A2340;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(26,35,64,0.18);
+      font-weight: 600;
+      font-size: 13px;
     }
 
-    .toast.success {
-      background: var(--olive);
-    }
-
-    .toast.info {
-      background: var(--brown-light);
-    }
-
-    .toast.error {
-      background: var(--orange);
-    }
+    .toast.success { background: #2E7D6B; }
+    .toast.info    { background: #243060; }
+    .toast.error   { background: #DC2626; }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
@@ -1826,19 +1852,20 @@
     <!-- ── Page Content ── -->
     <div class="page-content">
 
-      <!-- Hidden header for dashboard state (keeps existing JS references) -->
+      <!-- Report view header -->
       <header class="top-header hidden" id="dashboardHeader">
         <div class="brand">
           <div class="brand-line">
-            <span id="domainIcon" class="domain-icon">◈</span>
+            <button id="backToHomeBtn" class="ghost-btn" type="button" style="min-height:36px;padding:0 14px;font-size:13px;display:inline-flex;align-items:center;gap:7px;">← Back</button>
+            <span id="domainIcon" class="domain-icon" style="font-size:18px;">◈</span>
             <h1 id="dashboardTitle" class="title">Universal Dashboard Engine</h1>
           </div>
-          <p id="dashboardSubtitle" class="subtitle">Upload any dataset. Claude builds your dashboard instantly.</p>
+          <p id="dashboardSubtitle" class="subtitle"></p>
         </div>
         <div class="header-actions">
           <div id="keyChip" class="key-chip hidden"><span>Key saved •••••</span><button id="changeKeyBtn" class="text-btn" type="button">Change</button></div>
-          <button id="exportHtmlBtn" class="ghost-btn hidden" type="button">Download HTML</button>
-          <button id="exportPdfBtn" class="ghost-btn hidden" type="button">Download PDF</button>
+          <button id="exportHtmlBtn" class="ghost-btn hidden" type="button">↓ HTML</button>
+          <button id="exportPdfBtn" class="ghost-btn hidden" type="button">↓ PDF</button>
         </div>
       </header>
 
@@ -2326,6 +2353,32 @@
       }
 
       /* Wire all app listeners once after login shows mainApp */
+      function showHomePage() {
+        document.getElementById("uploadState").classList.remove("hidden");
+        document.getElementById("dashboardHeader").classList.add("hidden");
+        document.getElementById("dashboardMain").classList.add("hidden");
+        document.getElementById("filtersBar").classList.add("hidden");
+        document.getElementById("exportHtmlBtn").classList.add("hidden");
+        document.getElementById("exportPdfBtn").classList.add("hidden");
+        document.getElementById("sidebarDashboardBtn").classList.add("active");
+        document.getElementById("sidebarReportsBtn").classList.remove("active");
+      }
+
+      function showReportPage() {
+        if (!window._hasReport) { return; }
+        document.getElementById("uploadState").classList.add("hidden");
+        document.getElementById("dashboardHeader").classList.remove("hidden");
+        document.getElementById("dashboardMain").classList.remove("hidden");
+        document.getElementById("filtersBar").classList.remove("hidden");
+        document.getElementById("exportHtmlBtn").classList.remove("hidden");
+        document.getElementById("exportPdfBtn").classList.remove("hidden");
+        document.getElementById("sidebarDashboardBtn").classList.remove("active");
+        document.getElementById("sidebarReportsBtn").classList.add("active");
+      }
+
+      document.getElementById("sidebarDashboardBtn").addEventListener("click", showHomePage);
+      document.getElementById("sidebarReportsBtn").addEventListener("click", showReportPage);
+
       function wireAppListeners() {
         updateApiKeyUI();
         els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
@@ -2341,6 +2394,8 @@
         });
         if (els.apiKeyBtn) els.apiKeyBtn.addEventListener("click", () => { els.apiModal.classList.remove("hidden"); els.apiKeyInput.focus(); });
         if (els.heroUploadBtn) els.heroUploadBtn.addEventListener("click", () => els.fileInput.click());
+        const backBtn = document.getElementById("backToHomeBtn");
+        if (backBtn) backBtn.addEventListener("click", showHomePage);
         els.fileInput.addEventListener("change", event => {
           const file = event.target.files[0];
           if (file) handleFile(file);
@@ -2445,12 +2500,15 @@
         fmt = buildFormatter(spec);
         populateFilters(spec, RAW_DATA);
         renderAll(spec, FILTERED_DATA);
+        window._hasReport = true;
         els.uploadState.classList.add("hidden");
         document.getElementById("dashboardHeader").classList.remove("hidden");
         els.dashboardMain.classList.remove("hidden");
         els.filtersBar.classList.remove("hidden");
         els.exportHtmlBtn.classList.remove("hidden");
         els.exportPdfBtn.classList.remove("hidden");
+        document.getElementById("sidebarDashboardBtn").classList.remove("active");
+        document.getElementById("sidebarReportsBtn").classList.add("active");
         showToast(getApiKey() ? "Dashboard generated with Claude" : "Dashboard generated locally", "success");
       } catch (err) {
         const message = err && err.userMessage ? err.userMessage : "Claude API error — check your API key and try again";

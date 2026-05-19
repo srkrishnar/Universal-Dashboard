@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Universal Dashboard Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg: #FAF7F2;
+      --surface: #FFFFFF;
+      --surface2: #F5F0E8;
+      --brown: #6B4C35;
+      --brown-light: #8B6650;
+      --caramel: #C48A3F;
+      --caramel-light: #E0A84F;
+      --olive: #7A8C5C;
+      --olive-light: #9AAD74;
+      --orange: #E87040;
+      --orange-light: #F08C5A;
+      --purple: #C9B8D8;
+      --purple-deep: #9B88B0;
+      --text-primary: #2C1F14;
+      --text-secondary: #7A6555;
+      --text-muted: #B09880;
+      --border: #EDE5D8;
+      --shadow: 0 4px 24px rgba(107,76,53,0.08);
+      --shadow-lg: 0 8px 40px rgba(107,76,53,0.13);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(44, 31, 20, 0.32);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-card,
+    .upload-card,
+    .kpi-card,
+    .chart-card,
+    .insight-card,
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+      padding: 30px;
+    }
+
+    .modal-card h1,
+    .section-title,
+    .chart-card h3,
+    .table-card h3 {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      letter-spacing: 0;
+    }
+
+    .modal-card h1 {
+      font-size: 32px;
+    }
+
+    .modal-card p,
+    .upload-card p,
+    .chart-card p,
+    .subtitle,
+    .small-note {
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .api-row {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .api-row input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 14px;
+      color: var(--text-primary);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    .api-row input:focus,
+    select:focus {
+      border-color: var(--caramel);
+      box-shadow: 0 0 0 3px rgba(196, 138, 63, 0.15);
+    }
+
+    .primary-btn,
+    .ghost-btn,
+    .text-btn {
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-weight: 700;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .primary-btn {
+      padding: 0 18px;
+      color: var(--surface);
+      background: linear-gradient(135deg, var(--caramel), var(--orange));
+      box-shadow: var(--shadow);
+    }
+
+    .ghost-btn {
+      padding: 0 16px;
+      color: var(--brown);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+
+    .text-btn {
+      min-height: auto;
+      padding: 0;
+      color: var(--brown);
+      background: transparent;
+    }
+
+    .primary-btn:hover,
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px clamp(18px, 4vw, 44px);
+      background: rgba(250, 247, 242, 0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .domain-icon {
+      display: inline-grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    .title {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .subtitle {
+      margin: 4px 0 0 52px;
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .key-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 0 12px;
+      color: var(--text-secondary);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .upload-state {
+      min-height: calc(100vh - 86px);
+      display: grid;
+      place-items: center;
+      padding: 32px 18px;
+    }
+
+    .upload-card {
+      width: min(720px, 100%);
+      padding: clamp(24px, 4vw, 42px);
+      text-align: center;
+    }
+
+    .upload-card h2 {
+      margin: 0 0 10px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(34px, 6vw, 54px);
+      line-height: 1.03;
+    }
+
+    .drop-zone {
+      margin-top: 28px;
+      padding: clamp(28px, 6vw, 56px);
+      background: var(--surface2);
+      border: 2px dashed var(--text-muted);
+      border-radius: var(--radius);
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .drop-zone.drag-over {
+      background: var(--surface);
+      border-color: var(--caramel);
+      transform: translateY(-2px);
+    }
+
+    .drop-icon {
+      font-size: 42px;
+    }
+
+    .filters-bar {
+      position: sticky;
+      top: 79px;
+      z-index: 15;
+      display: flex;
+      gap: 12px;
+      align-items: end;
+      padding: 14px clamp(18px, 4vw, 44px);
+      background: rgba(245, 240, 232, 0.94);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .filters-wrap {
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .custom-filter {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+
+    .filter-field {
+      display: grid;
+      gap: 5px;
+      min-width: 172px;
+    }
+
+    .filter-field label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    select {
+      min-height: 40px;
+      padding: 0 36px 0 12px;
+      color: var(--text-primary);
+      appearance: none;
+      background: var(--surface) linear-gradient(45deg, transparent 50%, var(--brown) 50%) right 16px center / 7px 7px no-repeat;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    .dashboard-main {
+      padding: 28px clamp(18px, 4vw, 44px) 44px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 154px;
+      padding: 18px;
+      border-top: 3px solid var(--accent, var(--caramel));
+      animation: fadeUp 420ms ease both;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .kpi-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .kpi-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      background: var(--surface2);
+      border-radius: 50%;
+      font-size: 21px;
+    }
+
+    .kpi-label {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      margin-top: 18px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(32px, 4vw, 42px);
+      line-height: 1;
+    }
+
+    .badge,
+    .status-pill,
+    .chart-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge {
+      margin-top: 14px;
+      color: var(--brown);
+      background: var(--surface2);
+    }
+
+    .badge.positive,
+    .status-pill.positive {
+      color: var(--surface);
+      background: var(--olive);
+    }
+
+    .badge.negative,
+    .status-pill.negative {
+      color: var(--surface);
+      background: var(--orange);
+    }
+
+    .badge.neutral,
+    .status-pill.neutral {
+      color: var(--brown);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+    }
+
+    .charts-area {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .chart-row {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 8px;
+    }
+
+    .chart-row.layout-feature {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .chart-row.layout-three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chart-row.layout-two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-card {
+      min-height: 390px;
+      padding: 18px;
+    }
+
+    .chart-card h3 {
+      font-size: 22px;
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .chart-card p {
+      margin: 5px 0 0;
+      font-size: 13px;
+    }
+
+    .chart-tag {
+      color: var(--brown);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      flex: 0 0 auto;
+    }
+
+    .chart-box {
+      position: relative;
+      height: 300px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 32px 0 16px;
+    }
+
+    .section-title {
+      font-size: 28px;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .insight-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      padding: 16px;
+      border-left: 4px solid var(--accent, var(--caramel));
+    }
+
+    .insight-card strong {
+      color: var(--brown);
+    }
+
+    .insight-emoji {
+      font-size: 22px;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .table-card h3 {
+      padding: 18px 18px 0;
+      font-size: 24px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      padding: 18px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--text-secondary);
+      background: var(--surface2);
+      font-size: 12px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      color: var(--text-primary);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: grid;
+      place-items: center;
+      background: rgba(250, 247, 242, 0.78);
+      backdrop-filter: blur(8px);
+    }
+
+    .loading-card {
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      padding: 28px;
+      color: var(--brown);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      font-weight: 800;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid var(--border);
+      border-top-color: var(--caramel);
+      border-radius: 50%;
+      animation: spin 900ms linear infinite;
+    }
+
+    .toast-stack {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      display: grid;
+      gap: 10px;
+      width: min(420px, calc(100vw - 36px));
+    }
+
+    .toast {
+      padding: 14px 16px;
+      color: var(--surface);
+      background: var(--brown);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-weight: 700;
+    }
+
+    .toast.success {
+      background: var(--olive);
+    }
+
+    .toast.info {
+      background: var(--brown-light);
+    }
+
+    .toast.error {
+      background: var(--orange);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .top-header,
+      .filters-bar {
+        position: static;
+      }
+
+      .top-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .subtitle {
+        margin-left: 0;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .chart-row.layout-feature,
+      .chart-row.layout-three,
+      .chart-row.layout-two,
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .filters-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .custom-filter {
+        width: 100%;
+        padding-left: 0;
+        padding-top: 12px;
+        border-left: 0;
+        border-top: 1px solid var(--border);
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-field,
+      .filters-wrap,
+      .ghost-btn,
+      .primary-btn {
+        width: 100%;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions > * {
+        flex: 1 1 100%;
+      }
+
+      .chart-card {
+        min-height: 340px;
+      }
+
+      .chart-box {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <input id="fileInput" class="hidden" type="file" accept=".csv,.xlsx" />
+
+  <div id="apiModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="apiTitle">
+    <section class="modal-card">
+      <h1 id="apiTitle">Universal Dashboard Engine</h1>
+        <p>Enter your Anthropic API key to use Claude-generated dashboard design. You can also close this dialog and upload a file to use the built-in offline dashboard generator.</p>
+      <div class="api-row">
+        <input id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-ant-..." aria-label="Anthropic API key" />
+        <button id="saveKeyBtn" class="primary-btn" type="button">Save &amp; Continue</button>
+        <button id="skipKeyBtn" class="ghost-btn" type="button">Continue without key</button>
+      </div>
+      <p class="small-note">Never share exported HTML that still contains an active browser session.</p>
+    </section>
+  </div>
+
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <div id="loadingMessage">Claude is analysing your data…</div>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="top-header">
+      <div class="brand">
+        <div class="brand-line">
+          <span id="domainIcon" class="domain-icon">◈</span>
+          <h1 id="dashboardTitle" class="title">Universal Dashboard Engine</h1>
+        </div>
+        <p id="dashboardSubtitle" class="subtitle">Upload any dataset. Claude builds your dashboard instantly.</p>
+      </div>
+      <div class="header-actions">
+        <button id="apiKeyBtn" class="ghost-btn" type="button">Use Claude API</button>
+        <div id="keyChip" class="key-chip hidden"><span>Key saved •••••</span><button id="changeKeyBtn" class="text-btn" type="button">Change</button></div>
+        <button id="importBtn" class="primary-btn" type="button">Import Dataset</button>
+        <button id="exportHtmlBtn" class="ghost-btn hidden" type="button">Download HTML</button>
+        <button id="exportPdfBtn" class="ghost-btn hidden" type="button">Download PDF</button>
+      </div>
+    </header>
+
+    <section id="uploadState" class="upload-state">
+      <div class="upload-card">
+        <h2>Upload any dataset.</h2>
+        <p>Claude builds your dashboard instantly.</p>
+        <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload CSV or Excel dataset">
+          <div class="drop-icon">↥</div>
+          <p><strong>Drop a CSV or XLSX file here</strong></p>
+          <p>or click to browse</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="filtersBar" class="filters-bar hidden">
+      <div id="filtersWrap" class="filters-wrap"></div>
+      <div id="customFilter" class="custom-filter" aria-label="Custom filter">
+        <div class="filter-field">
+          <label for="customFilterColumn">Custom column</label>
+          <select id="customFilterColumn"></select>
+        </div>
+        <div class="filter-field">
+          <label for="customFilterValue">Custom value</label>
+          <select id="customFilterValue" disabled></select>
+        </div>
+      </div>
+      <button id="resetFiltersBtn" class="ghost-btn" type="button">Reset</button>
+    </section>
+
+    <main id="dashboardMain" class="dashboard-main hidden">
+      <section id="kpiGrid" class="kpi-grid"></section>
+      <section id="chartsArea" class="charts-area"></section>
+      <div class="section-head">
+        <h2 class="section-title">AI Insights</h2>
+      </div>
+      <section id="insightsGrid" class="insights-grid"></section>
+      <section class="table-card">
+        <h3>Top 10 Records</h3>
+        <div class="table-wrap">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toastStack" class="toast-stack" aria-live="polite"></div>
+
+  <script>
+    /* ═══════ GLOBAL STATE ══════════ */
+    let RAW_DATA = [];
+    let FILTERED_DATA = [];
+    let CURRENT_SPEC = null;
+    let CURRENT_TITLE = "Universal Dashboard";
+    const CHARTS = {};
+    let fmt = n => n;
+    const DEBUG_MODE = false;
+
+    const els = {
+      apiModal: document.getElementById("apiModal"),
+      apiKeyInput: document.getElementById("apiKeyInput"),
+      saveKeyBtn: document.getElementById("saveKeyBtn"),
+      skipKeyBtn: document.getElementById("skipKeyBtn"),
+      apiKeyBtn: document.getElementById("apiKeyBtn"),
+      changeKeyBtn: document.getElementById("changeKeyBtn"),
+      keyChip: document.getElementById("keyChip"),
+      fileInput: document.getElementById("fileInput"),
+      importBtn: document.getElementById("importBtn"),
+      exportHtmlBtn: document.getElementById("exportHtmlBtn"),
+      exportPdfBtn: document.getElementById("exportPdfBtn"),
+      uploadState: document.getElementById("uploadState"),
+      dropZone: document.getElementById("dropZone"),
+      loadingOverlay: document.getElementById("loadingOverlay"),
+      loadingMessage: document.getElementById("loadingMessage"),
+      filtersBar: document.getElementById("filtersBar"),
+      filtersWrap: document.getElementById("filtersWrap"),
+      customFilterColumn: document.getElementById("customFilterColumn"),
+      customFilterValue: document.getElementById("customFilterValue"),
+      resetFiltersBtn: document.getElementById("resetFiltersBtn"),
+      dashboardMain: document.getElementById("dashboardMain"),
+      dashboardTitle: document.getElementById("dashboardTitle"),
+      dashboardSubtitle: document.getElementById("dashboardSubtitle"),
+      domainIcon: document.getElementById("domainIcon"),
+      kpiGrid: document.getElementById("kpiGrid"),
+      chartsArea: document.getElementById("chartsArea"),
+      insightsGrid: document.getElementById("insightsGrid"),
+      tableHead: document.getElementById("tableHead"),
+      tableBody: document.getElementById("tableBody"),
+      toastStack: document.getElementById("toastStack")
+    };
+
+    const css = getComputedStyle(document.documentElement);
+    const COLORS = ["--caramel", "--olive", "--orange", "--brown", "--purple-deep", "--brown-light", "--olive-light", "--caramel-light"].map(name => css.getPropertyValue(name).trim());
+
+    /* ═══════ BOOTSTRAP ══════════ */
+    if (window.Chart && window.ChartDataLabels) {
+      Chart.register(ChartDataLabels);
+      Chart.defaults.set("plugins.datalabels", { display: false });
+      Chart.defaults.font.family = "'DM Sans', sans-serif";
+      Chart.defaults.color = css.getPropertyValue("--text-secondary").trim();
+      Chart.defaults.plugins.tooltip.backgroundColor = css.getPropertyValue("--surface").trim();
+      Chart.defaults.plugins.tooltip.titleColor = css.getPropertyValue("--text-primary").trim();
+      Chart.defaults.plugins.tooltip.bodyColor = css.getPropertyValue("--text-secondary").trim();
+      Chart.defaults.plugins.tooltip.borderColor = css.getPropertyValue("--border").trim();
+      Chart.defaults.plugins.tooltip.borderWidth = 1;
+      Chart.defaults.plugins.tooltip.padding = 10;
+      Chart.defaults.plugins.tooltip.cornerRadius = 10;
+    }
+
+    document.addEventListener("DOMContentLoaded", initApp);
+
+    /**
+     * Wires page events and restores any session API key state.
+     * @returns {void}
+     */
+    function initApp() {
+      updateApiKeyUI();
+      els.saveKeyBtn.addEventListener("click", saveApiKeyFromInput);
+      els.skipKeyBtn.addEventListener("click", () => {
+        els.apiModal.classList.add("hidden");
+        showToast("Using local dashboard generator", "info");
+      });
+      els.apiKeyBtn.addEventListener("click", () => {
+        els.apiModal.classList.remove("hidden");
+        els.apiKeyInput.focus();
+      });
+      els.changeKeyBtn.addEventListener("click", () => {
+        sessionStorage.removeItem("ANTHROPIC_KEY");
+        updateApiKeyUI();
+        els.apiModal.classList.remove("hidden");
+        els.apiKeyInput.focus();
+      });
+      els.importBtn.addEventListener("click", () => els.fileInput.click());
+      els.fileInput.addEventListener("change", event => {
+        const file = event.target.files[0];
+        if (file) handleFile(file);
+        event.target.value = "";
+      });
+      els.exportHtmlBtn.addEventListener("click", exportHTML);
+      els.exportPdfBtn.addEventListener("click", exportPDF);
+      els.customFilterColumn.addEventListener("change", updateCustomFilterValues);
+      els.customFilterValue.addEventListener("change", applyFilters);
+      els.resetFiltersBtn.addEventListener("click", resetFilters);
+      els.dropZone.addEventListener("click", () => els.fileInput.click());
+      els.dropZone.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") els.fileInput.click();
+      });
+      ["dragenter", "dragover"].forEach(type => els.dropZone.addEventListener(type, event => {
+        event.preventDefault();
+        els.dropZone.classList.add("drag-over");
+      }));
+      ["dragleave", "drop"].forEach(type => els.dropZone.addEventListener(type, event => {
+        event.preventDefault();
+        els.dropZone.classList.remove("drag-over");
+      }));
+      els.dropZone.addEventListener("drop", event => {
+        const file = event.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+    }
+
+    /**
+     * Saves the modal API key value.
+     * @returns {void}
+     */
+    function saveApiKeyFromInput() {
+      const key = els.apiKeyInput.value.trim();
+      if (!key) {
+        showToast("API key missing — enter your Anthropic API key", "error");
+        return;
+      }
+      setApiKey(key);
+      els.apiKeyInput.value = "";
+      els.apiModal.classList.add("hidden");
+      updateApiKeyUI();
+      showToast("API key saved for this tab", "success");
+    }
+
+    /**
+     * Updates the masked key chip in the header.
+     * @returns {void}
+     */
+    function updateApiKeyUI() {
+      els.keyChip.classList.toggle("hidden", !getApiKey());
+      els.apiKeyBtn.classList.toggle("hidden", Boolean(getApiKey()));
+    }
+
+    /**
+     * Runs the full parse, AI-spec, validate, and render pipeline for a file.
+     * @param {File} file Uploaded dataset file.
+     * @returns {Promise<void>}
+     */
+    async function handleFile(file) {
+      try {
+        showLoading(getApiKey() ? "Claude is analysing your data…" : "Building dashboard locally…");
+        Object.keys(CHARTS).forEach(destroyChart);
+        const parsed = await parseFile(file);
+        RAW_DATA = parsed.rows;
+        FILTERED_DATA = [...RAW_DATA];
+        const columnNames = Object.keys(RAW_DATA[0] || {});
+        const colSummary = classifyColumns(RAW_DATA);
+        const spec = getApiKey()
+          ? await callClaudeAPI(buildApiPrompt(parsed.filename, colSummary, RAW_DATA))
+          : buildLocalDashboardSpec(parsed.filename, colSummary, RAW_DATA);
+        ensureSpecFilters(spec, RAW_DATA, colSummary);
+        validateSpec(spec, columnNames, RAW_DATA);
+        spec.title = buildReportTitle(parsed.filename);
+        CURRENT_SPEC = spec;
+        CURRENT_TITLE = spec.title;
+        document.title = CURRENT_TITLE;
+        fmt = buildFormatter(spec);
+        populateFilters(spec, RAW_DATA);
+        renderAll(spec, FILTERED_DATA);
+        els.uploadState.classList.add("hidden");
+        els.dashboardMain.classList.remove("hidden");
+        els.filtersBar.classList.remove("hidden");
+        els.exportHtmlBtn.classList.remove("hidden");
+        els.exportPdfBtn.classList.remove("hidden");
+        showToast(getApiKey() ? "Dashboard generated with Claude" : "Dashboard generated locally", "success");
+      } catch (err) {
+        const message = err && err.userMessage ? err.userMessage : "Claude API error — check your API key and try again";
+        showToast(message, "error");
+        debug(err && err.message ? err.message : String(err));
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * Classifies dataset columns into numeric, date, categorical, and ID buckets.
+     * @param {Object[]} rows Parsed data rows.
+     * @returns {{numeric:string[], date:string[], categorical:string[], id:string[]}}
+     */
+    function classifyColumns(rows) {
+      const cols = Object.keys(rows[0] || {});
+      const result = { numeric: [], date: [], categorical: [], id: [] };
+      cols.forEach(col => {
+        const sample = rows.slice(0, 50).map(r => r[col]).filter(v => v !== "" && v != null);
+        if (!sample.length) return;
+        const unique = new Set(sample.map(String));
+        const isId = /id|code|ref|number|no\.?$/i.test(col) && unique.size === sample.length;
+        if (isId) {
+          result.id.push(col);
+          return;
+        }
+        const numericCount = sample.filter(v => isNumericLike(v)).length;
+        if (numericCount / sample.length > 0.85) {
+          result.numeric.push(col);
+          return;
+        }
+        const dateCount = sample.filter(v => isDateLike(v)).length;
+        if (dateCount / sample.length > 0.85) {
+          result.date.push(col);
+          return;
+        }
+        const uniqueRatio = unique.size / sample.length;
+        if (uniqueRatio < 0.4 || unique.size <= 25) result.categorical.push(col);
+      });
+      return result;
+    }
+
+    /**
+     * Builds the Claude prompt for producing a DashboardSpec object.
+     * @param {string} filename Uploaded filename.
+     * @param {Object} colSummary Classified columns.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {string}
+     */
+    function buildApiPrompt(filename, colSummary, rows) {
+      return `You are a data analyst. Analyse this dataset and return ONLY a valid JSON object matching the DashboardSpec schema. No markdown, no explanation, no backticks — raw JSON only.
+
+DATASET: "${filename}"
+COLUMNS: ${JSON.stringify(colSummary)}
+SAMPLE (first 20 rows): ${JSON.stringify(rows.slice(0, 20))}
+
+SCHEMA:
+{
+  "domain": "Business domain",
+  "domainIcon": "single emoji",
+  "title": "Dashboard title",
+  "subtitle": "Short analytical subtitle",
+  "currencySymbol": "",
+  "valueFormat": "currency|days|percentage|number",
+  "kpis": [{"label":"", "column":"", "aggregation":"count|sum|average|ratio|unique|max", "ratioValue":"optional", "icon":"", "accentClass":"accent-caramel", "badgeText":"", "badgeClass":"positive|negative|neutral"}],
+  "charts": [{"id":"chart1", "type":"line|bar|horizontalBar|donut|stackedBar", "title":"", "description":"", "groupBy":"", "valueColumn":"", "aggregation":"count|sum|average|max", "tag":""}],
+  "filters": [{"column":"", "label":""}],
+  "insights": [{"emoji":"", "text":"Use <strong> tags around key values"}],
+  "tableColumns": [],
+  "tableValueColumn": "",
+  "tableStatusColumn": "",
+  "tableStatusPositive": [],
+  "tableStatusNegative": []
+}
+
+RULES:
+1. Detect the business domain (Sales, HR, QA, Finance, Logistics, Healthcare, etc.)
+2. Select 4-6 most meaningful KPIs — prefer count, sum, average, ratio, unique, or max depending on column type
+3. Select 4 charts — include one time/trend chart when a date column exists, one categorical bar, one distribution donut, one ranking
+4. Select 3-4 filter columns — must be categorical with fewer than 25 unique values
+5. Write 8 specific data-driven insights referencing actual column names and values from the sample
+6. Set valueFormat to "currency" only when the selected value column is a monetary field such as price, amount, revenue, cost, fee, salary, budget, payment, or invoice total. Student counts, client names/codes, employee names/codes, Jira tickets, task IDs, IDs, roll numbers, marks, scores, ages, quantities, totals of people/items, and ordinary counts must use "number".
+7. tableStatusPositive and tableStatusNegative must reflect actual values in the status column
+8. All column references must exactly match column names in the dataset
+9. Return raw JSON only.`;
+    }
+
+    /**
+     * Calls the Anthropic Messages API and parses the returned JSON spec.
+     * @param {string} prompt Prompt text.
+     * @returns {Promise<Object>}
+     */
+    async function callClaudeAPI(prompt) {
+      let response;
+      try {
+        response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": getApiKey(),
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-calls": "true"
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 3000,
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+      } catch (err) {
+        throw userError("Claude API error — check your API key and try again", err);
+      }
+      if (!response.ok) throw userError("Claude API error — check your API key and try again");
+      const data = await response.json();
+      const raw = data && data.content && data.content[0] && data.content[0].text ? data.content[0].text.trim() : "";
+      const clean = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+      try {
+        return JSON.parse(clean);
+      } catch (err) {
+        throw userError("Could not parse AI response — try re-uploading the file", err);
+      }
+    }
+
+    /**
+     * Builds a complete DashboardSpec locally when no Claude API key is configured.
+     * @param {string} filename Uploaded filename.
+     * @param {{numeric:string[], date:string[], categorical:string[], id:string[]}} colSummary Classified columns.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {Object}
+     */
+    function buildLocalDashboardSpec(filename, colSummary, rows) {
+      const columns = Object.keys(rows[0] || {});
+      const domain = inferDomain(filename, columns);
+      const metric = chooseMetricColumn(colSummary, columns);
+      const category = chooseCategoryColumn(colSummary, rows, columns);
+      const secondaryCategory = colSummary.categorical.find(col => col !== category) || category;
+      const dateColumn = colSummary.date[0] || category;
+      const idColumn = colSummary.id[0] || columns[0];
+      const statusColumn = chooseStatusColumn(colSummary, columns);
+      const valueFormat = inferValueFormat(metric, rows);
+      const statusValues = statusColumn ? uniqueValues(rows, statusColumn) : [];
+
+      return {
+        domain: domain.name,
+        domainIcon: domain.icon,
+        title: `${domain.name} Dashboard`,
+        subtitle: `${rows.length.toLocaleString()} records analysed from ${filename}`,
+        currencySymbol: valueFormat === "currency" ? inferCurrencySymbol(rows, metric) : "",
+        valueFormat,
+        kpis: buildLocalKPIs(colSummary, rows, metric, category, idColumn),
+        charts: buildLocalCharts(metric, category, secondaryCategory, dateColumn, idColumn, colSummary),
+        filters: buildFilterSpecs(rows, columns, colSummary).slice(0, 4),
+        insights: buildLocalInsights(rows, metric, category, secondaryCategory, dateColumn, valueFormat),
+        tableColumns: chooseTableColumns(columns, idColumn, category, secondaryCategory, metric, dateColumn, statusColumn),
+        tableValueColumn: metric,
+        tableStatusColumn: statusColumn || "",
+        tableStatusPositive: statusValues.filter(value => /won|closed|filled|complete|completed|success|pass|active|approved|resolved|shipped|paid/i.test(value)).slice(0, 5),
+        tableStatusNegative: statusValues.filter(value => /lost|open|pending|fail|failed|blocked|rejected|cancel|delayed|overdue|unpaid/i.test(value)).slice(0, 5)
+      };
+    }
+
+    /**
+     * Ensures the spec always has usable filters based on actual uploaded headers.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} rows Parsed rows.
+     * @param {Object} colSummary Classified columns.
+     * @returns {void}
+     */
+    function ensureSpecFilters(spec, rows, colSummary) {
+      const columns = Object.keys(rows[0] || {});
+      const existing = (spec.filters || []).filter(filter => {
+        return filter && columns.includes(filter.column) && uniqueValues(rows, filter.column).length > 0;
+      });
+      const fallback = buildFilterSpecs(rows, columns, colSummary);
+      const merged = [];
+      [...existing, ...fallback].forEach(filter => {
+        if (!filter || !filter.column || merged.some(item => item.column === filter.column)) return;
+        merged.push({ column: filter.column, label: filter.column });
+      });
+      spec.filters = merged.slice(0, 4);
+    }
+
+    /**
+     * Builds filter specs from real column headers and available values.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string[]} columns Dataset columns.
+     * @param {Object} colSummary Classified columns.
+     * @returns {Object[]}
+     */
+    function buildFilterSpecs(rows, columns, colSummary) {
+      const preferred = [
+        ...colSummary.categorical,
+        ...columns.filter(col => !colSummary.numeric.includes(col) && !colSummary.date.includes(col))
+      ];
+      const scored = [...new Set(preferred)].map(column => {
+        const values = uniqueValues(rows, column);
+        const nonBlankCount = rows.filter(row => row[column] != null && String(row[column]).trim() !== "").length;
+        return { column, values, nonBlankCount };
+      }).filter(item => {
+        return item.nonBlankCount > 0 && item.values.length > 0 && item.values.length < Math.max(rows.length, 2);
+      }).sort((a, b) => {
+        const aIdeal = a.values.length >= 2 && a.values.length <= 50 ? 0 : 1;
+        const bIdeal = b.values.length >= 2 && b.values.length <= 50 ? 0 : 1;
+        if (aIdeal !== bIdeal) return aIdeal - bIdeal;
+        return a.values.length - b.values.length;
+      });
+      const fallback = columns.map(column => {
+        const values = uniqueValues(rows, column);
+        const nonBlankCount = rows.filter(row => row[column] != null && String(row[column]).trim() !== "").length;
+        return { column, values, nonBlankCount };
+      }).filter(item => item.nonBlankCount > 0 && item.values.length > 0);
+      const finalList = scored.length ? scored : fallback;
+      return finalList.slice(0, 4).map(item => ({ column: item.column, label: item.column }));
+    }
+
+    /**
+     * Infers a friendly domain name and icon from filename and columns.
+     * @param {string} filename Uploaded filename.
+     * @param {string[]} columns Dataset columns.
+     * @returns {{name:string, icon:string}}
+     */
+    function inferDomain(filename, columns) {
+      const text = `${filename} ${columns.join(" ")}`.toLowerCase();
+      if (/candidate|recruit|hiring|employee|department|salary|role/.test(text)) return { name: "HR Recruitment", icon: "👥" };
+      if (/sale|revenue|customer|deal|pipeline|invoice|order/.test(text)) return { name: "Sales", icon: "💼" };
+      if (/sprint|bug|defect|test|qa|ticket|story|release/.test(text)) return { name: "QA Metrics", icon: "✓" };
+      if (/finance|expense|budget|cost|profit|payment|amount/.test(text)) return { name: "Finance", icon: "₹" };
+      if (/shipment|delivery|warehouse|route|carrier|logistics/.test(text)) return { name: "Logistics", icon: "↦" };
+      if (/patient|doctor|clinic|diagnosis|health|medical/.test(text)) return { name: "Healthcare", icon: "+" };
+      return { name: "Data Analysis", icon: "◈" };
+    }
+
+    /**
+     * Chooses the primary numeric metric column.
+     * @param {Object} colSummary Classified columns.
+     * @param {string[]} columns All columns.
+     * @returns {string}
+     */
+    function chooseMetricColumn(colSummary, columns) {
+      const preferred = colSummary.numeric.find(col => /revenue|sales|amount|price|cost|profit|value|salary|budget|score|days|hours|count|total/i.test(col));
+      return preferred || colSummary.numeric[0] || colSummary.id[0] || columns[0];
+    }
+
+    /**
+     * Chooses the primary categorical grouping column.
+     * @param {Object} colSummary Classified columns.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string[]} columns All columns.
+     * @returns {string}
+     */
+    function chooseCategoryColumn(colSummary, rows, columns) {
+      return colSummary.categorical.find(col => uniqueValues(rows, col).length > 1) || colSummary.categorical[0] || columns.find(col => !colSummary.numeric.includes(col)) || columns[0];
+    }
+
+    /**
+     * Chooses a status-like column when available.
+     * @param {Object} colSummary Classified columns.
+     * @param {string[]} columns All columns.
+     * @returns {string}
+     */
+    function chooseStatusColumn(colSummary, columns) {
+      return colSummary.categorical.find(col => /status|stage|state|result|outcome/i.test(col)) || columns.find(col => /status|stage|state|result|outcome/i.test(col)) || "";
+    }
+
+    /**
+     * Infers value format from a metric column and the uploaded rows.
+     * @param {string} metric Metric column.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {string}
+     */
+    function inferValueFormat(metric, rows) {
+      if (isCurrencyColumn(metric, rows)) return "currency";
+      if (/percent|percentage|rate|ratio|conversion|margin/i.test(metric)) return "percentage";
+      if (/day|duration|age|sla|time to|cycle/i.test(metric)) return "days";
+      return "number";
+    }
+
+    /**
+     * Detects whether a column represents money rather than a plain count/score/ID.
+     * @param {string} column Column name.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {boolean}
+     */
+    function isCurrencyColumn(column, rows) {
+      const name = String(column || "").toLowerCase().replace(/[_-]+/g, " ");
+      if (!name) return false;
+      if (/\b(student|students|client|customer|employee|emp|associate|user|owner|assignee|reporter|manager|team|department|jira|ticket|issue|bug|defect|task|story|epic|sprint|project|count|qty|quantity|number|no|id|ids|code|ref|reference|roll|rank|score|mark|marks|grade|age|days|hours|duration|attendance|percent|percentage|rate|ratio|year)\b/i.test(name)) {
+        return false;
+      }
+      if (/\b(price|amount|revenue|sales|cost|profit|salary|budget|payment|invoice|fee|fees|charge|charges|expense|spend|paid|payable|receivable|mrp|fare|tax|discount|refund|wallet|balance)\b/i.test(name)) {
+        return true;
+      }
+      if (/\b(order|cart|basket|transaction|monetary|gross|net|total)\s+value\b|\bvalue\s+(in|rs|inr|usd|eur|gbp)\b/i.test(name)) return true;
+      const sample = (rows || []).slice(0, 50).map(row => String(row[column] || "")).join(" ");
+      return /[₹$€£]|\b(inr|usd|eur|gbp|rs\.?|rupees?)\b/i.test(sample);
+    }
+
+    /**
+     * Infers a currency symbol from sample values.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string} metric Metric column.
+     * @returns {string}
+     */
+    function inferCurrencySymbol(rows, metric) {
+      const sample = rows.slice(0, 25).map(row => String(row[metric] || "")).join(" ");
+      if (sample.includes("$")) return "$";
+      if (sample.includes("€")) return "€";
+      if (sample.includes("£")) return "£";
+      return "₹";
+    }
+
+    /**
+     * Builds local KPI specs.
+     * @param {Object} colSummary Classified columns.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string} metric Metric column.
+     * @param {string} category Category column.
+     * @param {string} idColumn ID column.
+     * @returns {Object[]}
+     */
+    function buildLocalKPIs(colSummary, rows, metric, category, idColumn) {
+      const kpis = [
+        { label: "Total Records", column: idColumn, aggregation: "count", icon: "📋", badgeText: "All rows", badgeClass: "neutral" },
+        { label: `Total ${toTitleLabel(metric)}`, column: metric, aggregation: colSummary.numeric.includes(metric) ? "sum" : "count", icon: "Σ", badgeText: "Total", badgeClass: "positive" },
+        { label: `Average ${toTitleLabel(metric)}`, column: metric, aggregation: colSummary.numeric.includes(metric) ? "average" : "count", icon: "Ø", badgeText: "Average", badgeClass: "neutral" },
+        { label: `Unique ${toTitleLabel(category)}`, column: category, aggregation: "unique", icon: "◇", badgeText: "Segments", badgeClass: "neutral" }
+      ];
+      const extraMetric = colSummary.numeric.find(col => col !== metric);
+      if (extraMetric) {
+        kpis.push({ label: `Max ${toTitleLabel(extraMetric)}`, column: extraMetric, aggregation: "max", icon: "↑", badgeText: "Peak", badgeClass: "positive" });
+      } else if (rows.length && category) {
+        const topValue = topCategory(rows, category).label;
+        kpis.push({ label: `${toTitleLabel(category)} Share`, column: category, aggregation: "ratio", ratioValue: topValue, icon: "%", badgeText: topValue || "Top", badgeClass: "neutral" });
+      }
+      return kpis.slice(0, 6);
+    }
+
+    /**
+     * Builds local chart specs.
+     * @param {string} metric Metric column.
+     * @param {string} category Primary category.
+     * @param {string} secondaryCategory Secondary category.
+     * @param {string} dateColumn Date column.
+     * @param {string} idColumn ID column.
+     * @param {Object} colSummary Classified columns.
+     * @returns {Object[]}
+     */
+    function buildLocalCharts(metric, category, secondaryCategory, dateColumn, idColumn, colSummary) {
+      const metricAgg = colSummary.numeric.includes(metric) ? "sum" : "count";
+      return [
+        { id: "chart1", type: "line", title: `${toTitleLabel(metric)} Trend`, description: `Trend grouped by ${toTitleLabel(dateColumn)}`, groupBy: dateColumn, valueColumn: metric, aggregation: metricAgg, tag: "Line" },
+        { id: "chart2", type: "donut", title: `${toTitleLabel(category)} Mix`, description: `Record distribution by ${toTitleLabel(category)}`, groupBy: category, valueColumn: idColumn, aggregation: "count", tag: "Donut" },
+        { id: "chart3", type: "bar", title: `${toTitleLabel(metric)} by ${toTitleLabel(category)}`, description: `Comparison across ${toTitleLabel(category)}`, groupBy: category, valueColumn: metric, aggregation: metricAgg, tag: "Bar" },
+        { id: "chart4", type: "horizontalBar", title: `Top ${toTitleLabel(secondaryCategory)}`, description: `Highest volume by ${toTitleLabel(secondaryCategory)}`, groupBy: secondaryCategory, valueColumn: idColumn, aggregation: "count", tag: "Horizontal Bar" }
+      ];
+    }
+
+    /**
+     * Builds deterministic local insights from dataset summaries.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string} metric Metric column.
+     * @param {string} category Primary category.
+     * @param {string} secondaryCategory Secondary category.
+     * @param {string} dateColumn Date column.
+     * @param {string} valueFormat Value format.
+     * @returns {Object[]}
+     */
+    function buildLocalInsights(rows, metric, category, secondaryCategory, dateColumn, valueFormat) {
+      const localFmt = buildFormatter({ valueFormat, currencySymbol: valueFormat === "currency" ? inferCurrencySymbol(rows, metric) : "" });
+      const topPrimary = topCategory(rows, category);
+      const topSecondary = topCategory(rows, secondaryCategory);
+      const total = rows.reduce((sum, row) => sum + parseNumber(row[metric]), 0);
+      const average = rows.length ? total / rows.length : 0;
+      const maxRow = [...rows].sort((a, b) => parseNumber(b[metric]) - parseNumber(a[metric]))[0] || {};
+      const dateValues = rows.map(row => new Date(row[dateColumn])).filter(date => !Number.isNaN(date.getTime())).sort((a, b) => a - b);
+      const rangeText = dateValues.length ? `${dateValues[0].toLocaleDateString()} to ${dateValues[dateValues.length - 1].toLocaleDateString()}` : "the available upload period";
+      return [
+        { emoji: "↗", text: `<strong>${toTitleLabel(category)}</strong> has <strong>${uniqueValues(rows, category).length}</strong> distinct values across the uploaded data.` },
+        { emoji: "Σ", text: `Total <strong>${toTitleLabel(metric)}</strong> is <strong>${localFmt(total)}</strong>.` },
+        { emoji: "Ø", text: `Average <strong>${toTitleLabel(metric)}</strong> per record is <strong>${localFmt(average)}</strong>.` },
+        { emoji: "★", text: `<strong>${topPrimary.label || "Top segment"}</strong> leads ${toTitleLabel(category)} with <strong>${topPrimary.count}</strong> records.` },
+        { emoji: "◆", text: `<strong>${topSecondary.label || "Top group"}</strong> is the strongest ${toTitleLabel(secondaryCategory)} group with <strong>${topSecondary.count}</strong> records.` },
+        { emoji: "↑", text: `The highest <strong>${toTitleLabel(metric)}</strong> value found is <strong>${localFmt(parseNumber(maxRow[metric]))}</strong>.` },
+        { emoji: "◷", text: `The timeline covers <strong>${rangeText}</strong>.` },
+        { emoji: "≡", text: `This local dashboard was generated from <strong>${rows.length.toLocaleString()}</strong> rows without calling an external API.` }
+      ];
+    }
+
+    /**
+     * Chooses table columns while preserving the original column names.
+     * @param {string[]} columns All columns.
+     * @param {...string} preferred Preferred columns.
+     * @returns {string[]}
+     */
+    function chooseTableColumns(columns, ...preferred) {
+      const selected = [];
+      preferred.filter(Boolean).forEach(col => {
+        if (columns.includes(col) && !selected.includes(col)) selected.push(col);
+      });
+      columns.forEach(col => {
+        if (selected.length < 8 && !selected.includes(col)) selected.push(col);
+      });
+      return selected;
+    }
+
+    /**
+     * Finds the most frequent value in a categorical column.
+     * @param {Object[]} rows Parsed rows.
+     * @param {string} column Column name.
+     * @returns {{label:string, count:number}}
+     */
+    function topCategory(rows, column) {
+      const counts = {};
+      rows.forEach(row => {
+        const value = row[column] == null || row[column] === "" ? "Blank" : String(row[column]);
+        counts[value] = (counts[value] || 0) + 1;
+      });
+      const [label, count] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] || ["", 0];
+      return { label, count };
+    }
+
+    /**
+     * Converts a column name into a compact display label.
+     * @param {string} value Column name.
+     * @returns {string}
+     */
+    function toTitleLabel(value) {
+      return String(value || "Value").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    /**
+     * Validates and lightly repairs a DashboardSpec against available columns.
+     * @param {Object} spec AI-produced DashboardSpec.
+     * @param {string[]} columnNames Dataset columns.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {void}
+     */
+    function validateSpec(spec, columnNames, rows) {
+      if (!spec || typeof spec !== "object") throw userError("Could not parse AI response — try re-uploading the file");
+      ["kpis", "charts", "insights", "tableColumns"].forEach(key => {
+        if (!Array.isArray(spec[key])) throw userError(`Dashboard spec is missing ${key}`);
+      });
+      if (spec.kpis.length < 4) throw userError("Dashboard spec must include at least 4 KPIs");
+      if (spec.charts.length < 3) throw userError("Dashboard spec must include at least 3 charts");
+      if (spec.insights.length < 5) throw userError("Dashboard spec must include at least 5 insights");
+
+      spec.kpis.forEach(kpi => {
+        kpi.column = resolveColumn(kpi.column, columnNames);
+      });
+      spec.charts.forEach(chart => {
+        chart.groupBy = resolveColumn(chart.groupBy, columnNames);
+        chart.valueColumn = resolveColumn(chart.valueColumn, columnNames);
+      });
+      (spec.filters || []).forEach(filter => {
+        filter.column = resolveColumn(filter.column, columnNames);
+      });
+      spec.tableColumns = spec.tableColumns.map(col => resolveColumn(col, columnNames)).filter(Boolean);
+      if (!spec.tableColumns.length) spec.tableColumns = columnNames.slice(0, 7);
+      spec.tableValueColumn = resolveColumn(spec.tableValueColumn, columnNames) || spec.tableColumns[0];
+      if (spec.tableStatusColumn) spec.tableStatusColumn = resolveColumn(spec.tableStatusColumn, columnNames);
+      const metricColumns = [
+        spec.tableValueColumn,
+        ...(spec.kpis || []).map(kpi => kpi.column),
+        ...(spec.charts || []).map(chart => chart.valueColumn)
+      ].filter(Boolean);
+      const hasCurrencyMetric = metricColumns.some(column => isCurrencyColumn(column, rows));
+      spec.valueFormat = hasCurrencyMetric && isCurrencyColumn(spec.tableValueColumn, rows)
+        ? "currency"
+        : inferValueFormat(spec.tableValueColumn, rows);
+      spec.currencySymbol = spec.valueFormat === "currency" ? inferCurrencySymbol(rows, spec.tableValueColumn) : "";
+    }
+
+    /**
+     * Builds a domain-aware number formatter.
+     * @param {Object} spec DashboardSpec.
+     * @returns {(n:number) => string}
+     */
+    function buildFormatter(spec) {
+      if (spec.valueFormat === "currency") {
+        return n => {
+          const value = Number(n) || 0;
+          const sym = spec.currencySymbol || "";
+          if (Math.abs(value) >= 10000000) return sym + (value / 10000000).toFixed(2) + " Cr";
+          if (Math.abs(value) >= 100000) return sym + (value / 100000).toFixed(1) + " L";
+          if (Math.abs(value) >= 1000) return sym + (value / 1000).toFixed(1) + "K";
+          return sym + Math.round(value).toLocaleString();
+        };
+      }
+      if (spec.valueFormat === "days") return n => (Number(n) || 0).toFixed(1) + "d";
+      if (spec.valueFormat === "percentage") return n => (Number(n) || 0).toFixed(1) + "%";
+      return n => {
+        const value = Number(n) || 0;
+        if (Math.abs(value) >= 1000000) return (value / 1000000).toFixed(1) + "M";
+        if (Math.abs(value) >= 1000) return (value / 1000).toFixed(1) + "K";
+        return Math.round(value).toLocaleString();
+      };
+    }
+
+    /**
+     * Formats a measure based on the actual column and aggregation.
+     * @param {number} value Numeric value.
+     * @param {string} column Source column.
+     * @param {string} aggregation Aggregation type.
+     * @returns {string}
+     */
+    function formatMeasure(value, column, aggregation) {
+      if (aggregation === "ratio") return buildFormatter({ valueFormat: "percentage" })(value);
+      if (aggregation === "count" || aggregation === "unique") return buildFormatter({ valueFormat: "number" })(value);
+      const valueFormat = inferValueFormat(column, RAW_DATA);
+      const currencySymbol = valueFormat === "currency" ? inferCurrencySymbol(RAW_DATA, column) : "";
+      return buildFormatter({ valueFormat, currencySymbol })(value);
+    }
+
+    /**
+     * Renders the whole dashboard from a spec and row set.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {void}
+     */
+    function renderAll(spec, data) {
+      els.dashboardTitle.textContent = spec.title || "Dataset Dashboard";
+      els.dashboardSubtitle.textContent = spec.subtitle || `${data.length.toLocaleString()} rows analysed`;
+      els.domainIcon.textContent = spec.domainIcon || "◈";
+      renderKPIs(spec, data);
+      renderCharts(spec, data);
+      renderInsights(spec);
+      renderTable(spec, data);
+    }
+
+    /**
+     * Builds the dashboard report title from the uploaded file name.
+     * @param {string} filename Uploaded filename.
+     * @returns {string}
+     */
+    function buildReportTitle(filename) {
+      const base = String(filename || "Dataset")
+        .replace(/\.[^.]+$/, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      return `${toTitleCase(base || "Dataset")} Report`;
+    }
+
+    /**
+     * Converts simple filename text into title case.
+     * @param {string} value Text to convert.
+     * @returns {string}
+     */
+    function toTitleCase(value) {
+      return String(value).replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    }
+
+    /**
+     * Renders KPI cards from the DashboardSpec.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {void}
+     */
+    function renderKPIs(spec, data) {
+      els.kpiGrid.replaceChildren();
+      spec.kpis.slice(0, 6).forEach((kpi, index) => {
+        const card = document.createElement("article");
+        card.className = "kpi-card";
+        card.style.setProperty("--accent", COLORS[index % COLORS.length]);
+        card.style.animationDelay = `${index * 50}ms`;
+
+        const top = document.createElement("div");
+        top.className = "kpi-top";
+        const label = document.createElement("p");
+        label.className = "kpi-label";
+        label.textContent = kpi.label || kpi.column;
+        const icon = document.createElement("div");
+        icon.className = "kpi-icon";
+        icon.textContent = kpi.icon || "◆";
+        top.append(label, icon);
+
+        const value = document.createElement("div");
+        value.className = "kpi-value";
+        value.textContent = formatMeasure(computeKPI(kpi, data), kpi.column, kpi.aggregation);
+        const badge = document.createElement("span");
+        badge.className = `badge ${safeClass(kpi.badgeClass || "neutral")}`;
+        badge.textContent = kpi.badgeText || `${data.length.toLocaleString()} rows`;
+        card.append(top, value, badge);
+        els.kpiGrid.appendChild(card);
+      });
+    }
+
+    /**
+     * Renders all charts from the DashboardSpec.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {void}
+     */
+    function renderCharts(spec, data) {
+      els.chartsArea.replaceChildren();
+      const charts = spec.charts.slice(0, 7);
+      const groups = [charts.slice(0, 2), charts.slice(2, 5), charts.slice(5, 7)];
+      const layouts = ["layout-feature", "layout-three", "layout-two"];
+      groups.forEach((group, groupIndex) => {
+        if (!group.length) return;
+        const row = document.createElement("div");
+        row.className = `chart-row ${layouts[groupIndex]}`;
+        group.forEach(chartSpec => row.appendChild(createChartCard(chartSpec, data)));
+        els.chartsArea.appendChild(row);
+      });
+    }
+
+    /**
+     * Creates a chart card and instantiates a Chart.js chart.
+     * @param {Object} chartSpec Chart spec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {HTMLElement}
+     */
+    function createChartCard(chartSpec, data) {
+      destroyChart(chartSpec.id);
+      const card = document.createElement("article");
+      card.className = "chart-card";
+      const head = document.createElement("div");
+      head.className = "chart-head";
+      const titleWrap = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = chartSpec.title || chartSpec.groupBy;
+      const desc = document.createElement("p");
+      desc.textContent = chartSpec.description || "";
+      titleWrap.append(title, desc);
+      const tag = document.createElement("span");
+      tag.className = "chart-tag";
+      tag.textContent = chartSpec.tag || chartSpec.type;
+      head.append(titleWrap, tag);
+
+      const box = document.createElement("div");
+      box.className = "chart-box";
+      const canvas = document.createElement("canvas");
+      canvas.id = chartSpec.id;
+      box.appendChild(canvas);
+      card.append(head, box);
+
+      requestAnimationFrame(() => {
+        const chartData = prepareChartData(chartSpec, data);
+        CHARTS[chartSpec.id] = new Chart(canvas.getContext("2d"), buildChartConfig(chartSpec, chartData));
+      });
+      return card;
+    }
+
+    /**
+     * Renders AI insight cards.
+     * @param {Object} spec DashboardSpec.
+     * @returns {void}
+     */
+    function renderInsights(spec) {
+      els.insightsGrid.replaceChildren();
+      spec.insights.forEach((insight, index) => {
+        const card = document.createElement("article");
+        card.className = "insight-card";
+        card.style.setProperty("--accent", COLORS[index % COLORS.length]);
+        const emoji = document.createElement("span");
+        emoji.className = "insight-emoji";
+        emoji.textContent = insight.emoji || "•";
+        const text = document.createElement("div");
+        text.appendChild(sanitizeInsight(insight.text || ""));
+        card.append(emoji, text);
+        els.insightsGrid.appendChild(card);
+      });
+    }
+
+    /**
+     * Renders the top 10 table.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {void}
+     */
+    function renderTable(spec, data) {
+      els.tableHead.replaceChildren();
+      els.tableBody.replaceChildren();
+      const cols = (spec.tableColumns || Object.keys(data[0] || {})).slice(0, 8);
+      const headRow = document.createElement("tr");
+      cols.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        headRow.appendChild(th);
+      });
+      els.tableHead.appendChild(headRow);
+      const rows = [...data].sort((a, b) => parseNumber(b[spec.tableValueColumn]) - parseNumber(a[spec.tableValueColumn])).slice(0, 10);
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        cols.forEach(col => {
+          const td = document.createElement("td");
+          const value = row[col] == null ? "" : String(row[col]);
+          if (spec.tableStatusColumn && col === spec.tableStatusColumn) {
+            const pill = document.createElement("span");
+            pill.className = `status-pill ${statusClass(value, spec)}`;
+            pill.textContent = value;
+            td.appendChild(pill);
+          } else {
+            td.textContent = value;
+          }
+          tr.appendChild(td);
+        });
+        els.tableBody.appendChild(tr);
+      });
+    }
+
+    /**
+     * Builds filter dropdowns from spec filters.
+     * @param {Object} spec DashboardSpec.
+     * @param {Object[]} data Full raw dataset.
+     * @returns {void}
+     */
+    function populateFilters(spec, data) {
+      els.filtersWrap.replaceChildren();
+      const columns = Object.keys(data[0] || {});
+      const filters = (spec.filters && spec.filters.length ? spec.filters : buildFilterSpecs(data, columns, classifyColumns(data))).filter(filter => {
+        return filter.column && columns.includes(filter.column) && uniqueValues(data, filter.column).length > 0;
+      });
+      filters.forEach(filter => {
+        const field = document.createElement("div");
+        field.className = "filter-field";
+        const label = document.createElement("label");
+        label.textContent = filter.column;
+        const select = document.createElement("select");
+        select.dataset.column = filter.column;
+        const all = document.createElement("option");
+        all.value = "";
+        all.textContent = "All";
+        select.appendChild(all);
+        uniqueValues(data, filter.column).slice(0, 200).forEach(value => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+        select.addEventListener("change", applyFilters);
+        field.append(label, select);
+        els.filtersWrap.appendChild(field);
+      });
+      populateCustomFilterColumns(columns);
+    }
+
+    /**
+     * Populates the custom filter column dropdown with every uploaded header.
+     * @param {string[]} columns Dataset columns.
+     * @returns {void}
+     */
+    function populateCustomFilterColumns(columns) {
+      const previousColumn = els.customFilterColumn.value;
+      els.customFilterColumn.replaceChildren(optionFor("", "Choose column"));
+      columns.forEach(column => {
+        els.customFilterColumn.appendChild(optionFor(column, column));
+      });
+      els.customFilterColumn.value = columns.includes(previousColumn) ? previousColumn : "";
+      updateCustomFilterValues(false);
+    }
+
+    /**
+     * Refreshes custom filter values after a custom column is selected.
+     * @returns {void}
+     */
+    function updateCustomFilterValues(shouldApply = true) {
+      const column = els.customFilterColumn.value;
+      const previousValue = els.customFilterValue.value;
+      els.customFilterValue.replaceChildren(optionFor("", column ? "All values" : "Choose column first"));
+      els.customFilterValue.disabled = !column;
+      if (!column) {
+        if (shouldApply) applyFilters();
+        return;
+      }
+      const values = uniqueValues(RAW_DATA, column);
+      values.forEach(value => {
+        els.customFilterValue.appendChild(optionFor(value, value));
+      });
+      els.customFilterValue.value = values.includes(previousValue) ? previousValue : "";
+      if (shouldApply) applyFilters();
+    }
+
+    /**
+     * Creates a select option.
+     * @param {string} value Option value.
+     * @param {string} label Option label.
+     * @returns {HTMLOptionElement}
+     */
+    function optionFor(value, label) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      return option;
+    }
+
+    /**
+     * Applies active filter dropdowns and rerenders.
+     * @returns {void}
+     */
+    function applyFilters() {
+      const selects = [...els.filtersWrap.querySelectorAll("select")];
+      const customColumn = els.customFilterColumn.value;
+      const customValue = els.customFilterValue.value;
+      FILTERED_DATA = RAW_DATA.filter(row => {
+        const autoMatch = selects.every(select => !select.value || String(row[select.dataset.column]) === select.value);
+        const customMatch = !customColumn || !customValue || String(row[customColumn]) === customValue;
+        return autoMatch && customMatch;
+      });
+      renderAll(CURRENT_SPEC, FILTERED_DATA);
+    }
+
+    /**
+     * Resets all filters and rerenders the full dataset.
+     * @returns {void}
+     */
+    function resetFilters() {
+      els.filtersWrap.querySelectorAll("select").forEach(select => {
+        select.value = "";
+      });
+      els.customFilterColumn.value = "";
+      updateCustomFilterValues();
+      FILTERED_DATA = [...RAW_DATA];
+      if (CURRENT_SPEC) renderAll(CURRENT_SPEC, FILTERED_DATA);
+    }
+
+    /**
+     * Destroys an existing Chart.js instance.
+     * @param {string} id Chart canvas id.
+     * @returns {void}
+     */
+    function destroyChart(id) {
+      if (CHARTS[id]) {
+        CHARTS[id].destroy();
+        delete CHARTS[id];
+      }
+    }
+
+    /**
+     * Parses CSV or XLSX files into row objects.
+     * @param {File} file Uploaded file.
+     * @returns {Promise<{rows:Object[], filename:string}>}
+     */
+    function parseFile(file) {
+      const lower = file.name.toLowerCase();
+      if (!lower.endsWith(".csv") && !lower.endsWith(".xlsx")) {
+        return Promise.reject(userError("Invalid file type — please upload a .csv or .xlsx file"));
+      }
+      if (lower.endsWith(".csv")) {
+        return new Promise((resolve, reject) => {
+          Papa.parse(file, {
+            header: false,
+            skipEmptyLines: false,
+            complete: result => {
+              const rows = normalizeTableRows(result.data);
+              if (!rows.length) reject(userError("No data rows found in the uploaded file"));
+              else resolve({ rows, filename: file.name });
+            },
+            error: () => reject(userError("No data rows found in the uploaded file"))
+          });
+        });
+      }
+      return file.arrayBuffer().then(buffer => {
+        const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const matrix = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: "", blankrows: true });
+        const rows = normalizeTableRows(matrix);
+        if (!rows.length) throw userError("No data rows found in the uploaded file");
+        return { rows, filename: file.name };
+      });
+    }
+
+    /**
+     * Exports the current page as a self-contained HTML file.
+     * @returns {void}
+     */
+    function exportHTML() {
+      const html = "<!DOCTYPE html>" + document.documentElement.outerHTML;
+      const blob = new Blob([html], { type: "text/html" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = CURRENT_TITLE.replace(/\s+/g, "_") + "_dashboard.html";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    /**
+     * Exports the current dashboard as a landscape PDF.
+     * @returns {Promise<void>}
+     */
+    async function exportPDF() {
+      showLoading("Preparing PDF…");
+      try {
+        const canvas = await html2canvas(els.dashboardMain, {
+          scale: 2,
+          backgroundColor: css.getPropertyValue("--bg").trim(),
+          useCORS: true
+        });
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: [canvas.width / 2, canvas.height / 2] });
+        pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, canvas.width / 2, canvas.height / 2);
+        pdf.save(CURRENT_TITLE.replace(/\s+/g, "_") + "_dashboard.pdf");
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * Reads the API key from session storage.
+     * @returns {string|null}
+     */
+    function getApiKey() {
+      return sessionStorage.getItem("ANTHROPIC_KEY") || null;
+    }
+
+    /**
+     * Saves the API key in session storage.
+     * @param {string} key Anthropic API key.
+     * @returns {void}
+     */
+    function setApiKey(key) {
+      sessionStorage.setItem("ANTHROPIC_KEY", key.trim());
+    }
+
+    /**
+     * Shows the loading overlay.
+     * @param {string} msg Loading message.
+     * @returns {void}
+     */
+    function showLoading(msg) {
+      els.loadingMessage.textContent = msg;
+      els.loadingOverlay.classList.remove("hidden");
+    }
+
+    /**
+     * Hides the loading overlay.
+     * @returns {void}
+     */
+    function hideLoading() {
+      els.loadingOverlay.classList.add("hidden");
+    }
+
+    /**
+     * Shows an auto-dismissing toast.
+     * @param {string} msg Toast message.
+     * @param {"error"|"success"|"info"} type Toast type.
+     * @returns {void}
+     */
+    function showToast(msg, type) {
+      const toast = document.createElement("div");
+      toast.className = `toast ${safeClass(type || "info")}`;
+      toast.textContent = msg;
+      els.toastStack.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    /**
+     * Logs only when DEBUG_MODE is enabled.
+     * @param {*} msg Debug value.
+     * @returns {void}
+     */
+    function debug(msg) {
+      if (DEBUG_MODE) console.log(msg);
+    }
+
+    /**
+     * Computes a KPI value.
+     * @param {Object} kpi KPI spec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {number}
+     */
+    function computeKPI(kpi, data) {
+      if (!data.length) return 0;
+      switch (kpi.aggregation) {
+        case "sum":
+          return data.reduce((sum, row) => sum + parseNumber(row[kpi.column]), 0);
+        case "average":
+          return data.reduce((sum, row) => sum + parseNumber(row[kpi.column]), 0) / data.length;
+        case "ratio":
+          return data.filter(row => String(row[kpi.column]) === String(kpi.ratioValue)).length / data.length * 100;
+        case "unique":
+          return new Set(data.map(row => row[kpi.column]).filter(v => v != null && v !== "")).size;
+        case "max":
+          return Math.max(...data.map(row => parseNumber(row[kpi.column])));
+        case "count":
+        default:
+          return data.length;
+      }
+    }
+
+    /**
+     * Aggregates rows by a grouping column.
+     * @param {Object[]} data Rows.
+     * @param {string} groupByCol Group column.
+     * @param {string} valueCol Value column.
+     * @param {string} method Aggregation method.
+     * @returns {Object<string, number>}
+     */
+    function aggregate(data, groupByCol, valueCol, method) {
+      const map = {};
+      data.forEach(row => {
+        const rawKey = row[groupByCol];
+        if (rawKey == null || rawKey === "") return;
+        const key = String(rawKey);
+        if (!map[key]) map[key] = { sum: 0, count: 0, values: [] };
+        const v = parseNumber(row[valueCol]);
+        map[key].sum += v;
+        map[key].count += 1;
+        map[key].values.push(v);
+      });
+      const result = {};
+      Object.entries(map).forEach(([key, bucket]) => {
+        switch (method) {
+          case "sum":
+            result[key] = bucket.sum;
+            break;
+          case "average":
+            result[key] = bucket.count ? bucket.sum / bucket.count : 0;
+            break;
+          case "max":
+            result[key] = Math.max(...bucket.values);
+            break;
+          case "count":
+          default:
+            result[key] = bucket.count;
+        }
+      });
+      return result;
+    }
+
+    /**
+     * Prepares labels and values for a chart.
+     * @param {Object} chartSpec Chart spec.
+     * @param {Object[]} data Current filtered data.
+     * @returns {{labels:string[], values:number[]}}
+     */
+    function prepareChartData(chartSpec, data) {
+      if (chartSpec.type === "line" && data.some(row => isDateLike(row[chartSpec.groupBy]))) {
+        return aggregateByMonth(data, chartSpec);
+      }
+      const aggregated = aggregate(data, chartSpec.groupBy, chartSpec.valueColumn, chartSpec.aggregation);
+      const entries = Object.entries(aggregated).sort((a, b) => b[1] - a[1]).slice(0, chartSpec.type === "donut" ? 8 : 10);
+      return { labels: entries.map(([label]) => label), values: entries.map(([, value]) => value) };
+    }
+
+    /**
+     * Aggregates chart data by month for date-based trends.
+     * @param {Object[]} data Rows.
+     * @param {Object} chartSpec Chart spec.
+     * @returns {{labels:string[], values:number[]}}
+     */
+    function aggregateByMonth(data, chartSpec) {
+      const buckets = {};
+      data.forEach(row => {
+        const date = new Date(row[chartSpec.groupBy]);
+        if (Number.isNaN(date.getTime())) return;
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        if (!buckets[key]) buckets[key] = { date, rows: [] };
+        buckets[key].rows.push(row);
+      });
+      const sorted = Object.entries(buckets).sort(([a], [b]) => a.localeCompare(b));
+      const years = new Set(sorted.map(([, bucket]) => bucket.date.getFullYear()));
+      return {
+        labels: sorted.map(([, bucket]) => bucket.date.toLocaleDateString("en-US", { month: "short", year: years.size > 1 ? "2-digit" : undefined })),
+        values: sorted.map(([, bucket]) => computeAggregateValue(bucket.rows, chartSpec.valueColumn, chartSpec.aggregation))
+      };
+    }
+
+    /**
+     * Computes one aggregate value for an ungrouped row bucket.
+     * @param {Object[]} rows Rows in the bucket.
+     * @param {string} valueColumn Value column.
+     * @param {string} method Aggregation method.
+     * @returns {number}
+     */
+    function computeAggregateValue(rows, valueColumn, method) {
+      if (!rows.length) return 0;
+      const values = rows.map(row => parseNumber(row[valueColumn]));
+      switch (method) {
+        case "sum":
+          return values.reduce((sum, value) => sum + value, 0);
+        case "average":
+          return values.reduce((sum, value) => sum + value, 0) / rows.length;
+        case "max":
+          return Math.max(...values);
+        case "count":
+        default:
+          return rows.length;
+      }
+    }
+
+    /**
+     * Builds a Chart.js configuration.
+     * @param {Object} chartSpec Chart spec.
+     * @param {{labels:string[], values:number[]}} chartData Prepared data.
+     * @returns {Object}
+     */
+    function buildChartConfig(chartSpec, chartData) {
+      const type = chartSpec.type === "donut" ? "doughnut" : "bar";
+      const chartType = chartSpec.type === "line" ? "line" : type;
+      const isHorizontal = chartSpec.type === "horizontalBar";
+      const isDonut = chartSpec.type === "donut";
+      const dataset = {
+        label: chartSpec.title,
+        data: chartData.values,
+        backgroundColor: isDonut ? chartData.values.map((_, i) => COLORS[i % COLORS.length]) : COLORS[0],
+        borderColor: chartSpec.type === "line" ? COLORS[0] : chartData.values.map((_, i) => COLORS[i % COLORS.length]),
+        borderWidth: chartSpec.type === "line" ? 3 : 1,
+        borderRadius: chartSpec.type === "bar" || isHorizontal ? 8 : 0,
+        borderSkipped: false,
+        tension: 0.38,
+        fill: chartSpec.type === "line",
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        cutout: isDonut ? "62%" : undefined
+      };
+      if (chartSpec.type === "line") dataset.backgroundColor = "rgba(196, 138, 63, 0.16)";
+      return {
+        type: chartType,
+        data: { labels: chartData.labels, datasets: [dataset] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: isHorizontal ? "y" : "x",
+          layout: chartLayout(chartSpec.type),
+          plugins: {
+            legend: { display: isDonut, position: "bottom", labels: { boxWidth: 12, usePointStyle: true } },
+            datalabels: dataLabelsFor(chartSpec),
+            tooltip: {
+              callbacks: {
+                label: context => `${context.label || chartSpec.title}: ${formatMeasure(getParsedChartValue(context), chartSpec.valueColumn, chartSpec.aggregation)}`
+              }
+            }
+          },
+          scales: isDonut ? {} : {
+            x: { stacked: chartSpec.type === "stackedBar", grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true } },
+            y: { stacked: chartSpec.type === "stackedBar", beginAtZero: true, grid: { color: "rgba(107, 76, 53, 0.08)" } }
+          }
+        }
+      };
+    }
+
+    /**
+     * Extracts a numeric value from a Chart.js tooltip context.
+     * @param {Object} context Chart.js tooltip context.
+     * @returns {number}
+     */
+    function getParsedChartValue(context) {
+      if (typeof context.parsed === "number") return context.parsed;
+      if (context.parsed && typeof context.parsed.y === "number") return context.parsed.y;
+      if (context.parsed && typeof context.parsed.x === "number") return context.parsed.x;
+      return 0;
+    }
+
+    /**
+     * Returns chart-specific datalabel options.
+     * @param {Object} chartSpec Dashboard chart spec.
+     * @returns {Object}
+     */
+    function dataLabelsFor(chartSpec) {
+      const type = chartSpec.type;
+      if (type === "donut") {
+        return {
+          display: true,
+          formatter: (v, ctx) => {
+            const total = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1;
+            return ((v / total) * 100).toFixed(1) + "%";
+          },
+          color: css.getPropertyValue("--surface").trim(),
+          font: { size: 12, weight: "700" },
+          textShadowColor: "rgba(0,0,0,0.25)",
+          textShadowBlur: 4
+        };
+      }
+      if (type === "horizontalBar") {
+        return {
+          display: true,
+          formatter: v => formatMeasure(v, chartSpec.valueColumn, chartSpec.aggregation),
+          color: ctx => ctx.dataset.data[ctx.dataIndex] / Math.max(...ctx.dataset.data, 1) > 0.45 ? css.getPropertyValue("--surface").trim() : css.getPropertyValue("--brown").trim(),
+          font: { size: 11, weight: "700" },
+          anchor: "end",
+          align: ctx => ctx.dataset.data[ctx.dataIndex] / Math.max(...ctx.dataset.data, 1) > 0.45 ? "start" : "end",
+          offset: 6,
+          backgroundColor: ctx => ctx.dataset.data[ctx.dataIndex] / Math.max(...ctx.dataset.data, 1) > 0.45 ? "transparent" : "rgba(255,255,255,0.88)",
+          borderRadius: 4,
+          borderWidth: 1,
+          borderColor: "rgba(107,76,53,0.15)"
+        };
+      }
+      return {
+        display: true,
+        formatter: v => formatMeasure(v, chartSpec.valueColumn, chartSpec.aggregation),
+        color: css.getPropertyValue("--brown").trim(),
+        font: { size: type === "line" ? 10 : 11, weight: "600" },
+        anchor: "end",
+        align: "top",
+        offset: 4,
+        backgroundColor: "rgba(255,255,255,0.88)",
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "rgba(107,76,53,0.15)",
+        clamp: type === "line"
+      };
+    }
+
+    /**
+     * Returns chart-specific layout padding.
+     * @param {string} type Dashboard chart type.
+     * @returns {Object}
+     */
+    function chartLayout(type) {
+      if (type === "horizontalBar") return { padding: { right: 80 } };
+      if (type === "line") return { padding: { top: 28 } };
+      if (type === "bar" || type === "stackedBar") return { padding: { top: 30 } };
+      return { padding: 6 };
+    }
+
+    /**
+     * Extracts unique non-empty values for a column.
+     * @param {Object[]} data Rows.
+     * @param {string} column Column name.
+     * @returns {string[]}
+     */
+    function uniqueValues(data, column) {
+      return [...new Set(data.map(row => row[column]).filter(v => v != null && v !== "").map(String))].sort((a, b) => a.localeCompare(b));
+    }
+
+    /**
+     * Cleans parsed rows by removing fully blank records.
+     * @param {Object[]} rows Parsed rows.
+     * @returns {Object[]}
+     */
+    function cleanRows(rows) {
+      return rows.filter(row => Object.values(row).some(value => value != null && String(value).trim() !== ""));
+    }
+
+    /**
+     * Converts a raw sheet/CSV matrix into objects using the detected header row.
+     * @param {Array[]} matrix Raw rows from CSV or Excel.
+     * @returns {Object[]}
+     */
+    function normalizeTableRows(matrix) {
+      const rows = (matrix || []).map(row => Array.isArray(row) ? row : Object.values(row || {}));
+      const headerIndex = detectHeaderRow(rows);
+      if (headerIndex < 0) return [];
+      const dataRows = rows.slice(headerIndex + 1);
+      const columnIndexes = detectUsedColumnIndexes(rows[headerIndex], dataRows);
+      if (!columnIndexes.length) return [];
+      const headers = makeUniqueHeaders(columnIndexes.map((colIndex, index) => {
+        const header = cellText(rows[headerIndex][colIndex]);
+        return header || `Column ${index + 1}`;
+      }));
+      return dataRows.map(row => {
+        const record = {};
+        columnIndexes.forEach((colIndex, index) => {
+          record[headers[index]] = normalizeCellValue(row[colIndex]);
+        });
+        return record;
+      }).filter(row => Object.values(row).some(value => value != null && String(value).trim() !== ""));
+    }
+
+    /**
+     * Finds the most likely header row, allowing blank rows before the table.
+     * @param {Array[]} rows Raw matrix rows.
+     * @returns {number}
+     */
+    function detectHeaderRow(rows) {
+      let best = { index: -1, score: 0 };
+      rows.slice(0, 25).forEach((row, index) => {
+        const cells = (row || []).map(cellText);
+        const nonEmpty = cells.filter(Boolean);
+        if (nonEmpty.length < 1) return;
+        const textCount = nonEmpty.filter(value => !isNumericLike(value) && !isDateLike(value)).length;
+        const uniqueCount = new Set(nonEmpty.map(value => value.toLowerCase())).size;
+        const nextRowsWithData = rows.slice(index + 1, index + 6).filter(nextRow => countNonEmptyCells(nextRow) >= Math.max(1, Math.min(nonEmpty.length, 3))).length;
+        const score = nonEmpty.length + textCount * 2 + uniqueCount + nextRowsWithData * 3 - index * 0.15;
+        if (score > best.score) best = { index, score };
+      });
+      return best.index;
+    }
+
+    /**
+     * Detects columns that have a header or data beneath the detected header row.
+     * @param {Array} headerRow Header row cells.
+     * @param {Array[]} dataRows Rows below the header.
+     * @returns {number[]}
+     */
+    function detectUsedColumnIndexes(headerRow, dataRows) {
+      const maxLength = Math.max(headerRow.length, ...dataRows.map(row => (row || []).length));
+      const indexes = [];
+      for (let index = 0; index < maxLength; index += 1) {
+        const hasHeader = cellText(headerRow[index]) !== "";
+        const hasData = dataRows.some(row => cellText((row || [])[index]) !== "");
+        if (hasHeader || hasData) indexes.push(index);
+      }
+      return indexes;
+    }
+
+    /**
+     * Creates unique non-empty headers while preserving source names.
+     * @param {string[]} headers Raw header names.
+     * @returns {string[]}
+     */
+    function makeUniqueHeaders(headers) {
+      const counts = {};
+      return headers.map((header, index) => {
+        const base = header || `Column ${index + 1}`;
+        counts[base] = (counts[base] || 0) + 1;
+        return counts[base] === 1 ? base : `${base} ${counts[base]}`;
+      });
+    }
+
+    /**
+     * Counts non-empty cells in a raw row.
+     * @param {Array} row Raw row.
+     * @returns {number}
+     */
+    function countNonEmptyCells(row) {
+      return (row || []).filter(value => cellText(value) !== "").length;
+    }
+
+    /**
+     * Converts a cell to comparable trimmed text.
+     * @param {*} value Cell value.
+     * @returns {string}
+     */
+    function cellText(value) {
+      if (value == null) return "";
+      if (value instanceof Date) return value.toISOString().slice(0, 10);
+      return String(value).trim();
+    }
+
+    /**
+     * Preserves dates and trims strings from parsed cells.
+     * @param {*} value Cell value.
+     * @returns {*}
+     */
+    function normalizeCellValue(value) {
+      if (value == null) return "";
+      if (value instanceof Date) return value.toISOString().slice(0, 10);
+      return typeof value === "string" ? value.trim() : value;
+    }
+
+    /**
+     * Parses a number-like value.
+     * @param {*} value Input value.
+     * @returns {number}
+     */
+    function parseNumber(value) {
+      if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+      const cleaned = String(value == null ? "" : value).replace(/[^0-9.-]/g, "");
+      const parsed = parseFloat(cleaned);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    /**
+     * Detects whether a value is intentionally numeric.
+     * @param {*} value Input value.
+     * @returns {boolean}
+     */
+    function isNumericLike(value) {
+      if (typeof value === "number") return Number.isFinite(value);
+      const text = String(value == null ? "" : value).trim();
+      if (!text) return false;
+      return /^[$₹€£]?\s*-?\d{1,3}(,\d{3})*(\.\d+)?%?$|^[$₹€£]?\s*-?\d+(\.\d+)?%?$/.test(text);
+    }
+
+    /**
+     * Detects whether a value can be treated as a date.
+     * @param {*} value Input value.
+     * @returns {boolean}
+     */
+    function isDateLike(value) {
+      if (value instanceof Date) return !Number.isNaN(value.getTime());
+      if (typeof value === "number") return false;
+      const text = String(value == null ? "" : value).trim();
+      if (!text || /^[-+]?\d+(\.\d+)?$/.test(text)) return false;
+      return !Number.isNaN(Date.parse(text));
+    }
+
+    /**
+     * Resolves a column reference to an exact or nearest known column.
+     * @param {string} requested Requested column.
+     * @param {string[]} columns Available columns.
+     * @returns {string}
+     */
+    function resolveColumn(requested, columns) {
+      if (!requested) return columns[0];
+      if (columns.includes(requested)) return requested;
+      const norm = normalizeName(requested);
+      const exact = columns.find(col => normalizeName(col) === norm);
+      if (exact) return exact;
+      const partial = columns.find(col => normalizeName(col).includes(norm) || norm.includes(normalizeName(col)));
+      if (partial) return partial;
+      throw userError(`Column "${requested}" was not found in the uploaded data`);
+    }
+
+    /**
+     * Normalizes text for loose column matching.
+     * @param {string} value Text.
+     * @returns {string}
+     */
+    function normalizeName(value) {
+      return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
+    /**
+     * Returns the table status class for a status value.
+     * @param {string} value Status value.
+     * @param {Object} spec DashboardSpec.
+     * @returns {string}
+     */
+    function statusClass(value, spec) {
+      const lower = value.toLowerCase();
+      if ((spec.tableStatusPositive || []).map(v => String(v).toLowerCase()).includes(lower)) return "positive";
+      if ((spec.tableStatusNegative || []).map(v => String(v).toLowerCase()).includes(lower)) return "negative";
+      return "neutral";
+    }
+
+    /**
+     * Restricts CSS class values to safe tokens.
+     * @param {string} value Proposed class.
+     * @returns {string}
+     */
+    function safeClass(value) {
+      return String(value || "").replace(/[^a-z0-9_-]/gi, "");
+    }
+
+    /**
+     * Sanitizes AI insight text while preserving strong tags.
+     * @param {string} html Insight text.
+     * @returns {DocumentFragment}
+     */
+    function sanitizeInsight(html) {
+      const fragment = document.createDocumentFragment();
+      const parts = String(html).split(/(<\/?strong>)/i);
+      let strongNode = null;
+      parts.forEach(part => {
+        if (/^<strong>$/i.test(part)) {
+          strongNode = document.createElement("strong");
+          fragment.appendChild(strongNode);
+          return;
+        }
+        if (/^<\/strong>$/i.test(part)) {
+          strongNode = null;
+          return;
+        }
+        const text = document.createTextNode(part.replace(/<[^>]*>/g, ""));
+        if (strongNode) strongNode.appendChild(text);
+        else fragment.appendChild(text);
+      });
+      return fragment;
+    }
+
+    /**
+     * Creates an error carrying a user-safe message.
+     * @param {string} message User-safe message.
+     * @param {Error} [cause] Original error.
+     * @returns {Error}
+     */
+    function userError(message, cause) {
+      const err = new Error(message);
+      err.userMessage = message;
+      err.cause = cause;
+      return err;
+    }
+  </script>
+</body>
+</html>
